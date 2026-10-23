@@ -1,25 +1,100 @@
 @import "tailwindcss";
 
+/*
+ * Nordic Peace design tokens (Tailwind v4 @theme).
+ * Contrast rules: rose #DE8096 is for decoration only — never as text on
+ * cream/blush. Use rose-ink #A64560 for rose-colored text (AA on cream & blush).
+ * Plum on cream and cream on plum both exceed AA for normal text.
+ */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-cream: #fff9f6;
+  --color-blush: #fbe9ef;
+  --color-blush-deep: #f6d3dd;
+  --color-rose: #de8096;
+  --color-rose-ink: #a64560;
+  --color-plum: #372a33;
+  --color-plum-soft: #5b4853;
+  --color-line: #efd9e0;
+
+  --color-background: #fff9f6;
+  --color-foreground: #372a33;
+
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-cormorant), ui-serif, Georgia, serif;
+
+  --shadow-soft: 0 16px 40px -20px rgb(55 42 51 / 0.28);
 }
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@layer base {
+  body {
+    background-color: #fff9f6;
+    color: #372a33;
+    font-family: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-cormorant), ui-serif, Georgia, serif;
+  }
+
+  /* Visible focus ring on every interactive control (WCAG 2.4.7). */
+  :focus-visible {
+    outline: 2px solid #a64560;
+    outline-offset: 2px;
   }
 }
 
-body {
-  background-color: var(--background);
-  color: var(--foreground);
+/* --- Motion (kept subtle; disabled globally under prefers-reduced-motion) --- */
+
+@keyframes np-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes np-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes np-drawer-in {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.np-marquee-track {
+  animation: np-marquee 45s linear infinite;
+}
+
+.np-fade-in {
+  animation: np-fade-in 200ms ease-out both;
+}
+
+.np-drawer-in {
+  animation: np-drawer-in 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
