@@ -4,10 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button, Input } from "@/components/ui";
 import { ROUTES } from "@/constants";
+import { isEmail } from "@/utils";
 
 type FormStatus = "idle" | "loading" | "success" | "error";
-
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 type NewsletterFormProps = {
   /** UTM-friendly signup source — "footer", "popup" or "home". */
@@ -29,7 +28,7 @@ export function NewsletterForm({ source }: NewsletterFormProps) {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const validEmail = EMAIL_PATTERN.test(email.trim());
+    const validEmail = isEmail(email);
     setEmailError(validEmail ? null : "Please enter a valid email address.");
     setConsentError(consent ? null : "Please confirm you'd like to receive emails.");
     if (!validEmail || !consent) {

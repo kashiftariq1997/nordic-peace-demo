@@ -2,6 +2,9 @@ import { ROUTES } from "./routes";
 
 export const SITE_NAME = "Nordic Peace";
 
+/** Public contact address — shown on the contact page and linked from FAQs. */
+export const SITE_EMAIL = "hello@nordicpeace.com";
+
 /** Free-shipping threshold in USD — read from here everywhere (announcement bar, cart, policies). */
 export const FREE_SHIPPING_THRESHOLD = 75;
 
