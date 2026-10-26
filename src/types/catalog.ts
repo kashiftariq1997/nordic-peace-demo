@@ -42,3 +42,11 @@ export type CatalogFilterOptions = {
   priceMin: number;
   priceMax: number;
 };
+
+/** URL-backed state of the collection page (parsed from searchParams). */
+export type CollectionQuery = {
+  filters: ProductFilters;
+  sort: SortOption;
+  /** Opaque pagination cursor (null = first page). */
+  cursor: string | null;
+};

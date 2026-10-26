@@ -72,7 +72,8 @@ export function applyProductSort(products: Product[], sort: SortOption = "featur
   return sorted;
 }
 
-const DEFAULT_PAGE_SIZE = 12;
+/** Default (and homepage/collection) page size — shared by grids and pagination. */
+export const PRODUCTS_PAGE_SIZE = 12;
 
 /**
  * Offset-based pagination with an opaque string cursor. The cursor is the
@@ -82,7 +83,7 @@ export function paginateProducts(
   items: Product[],
   options?: { first?: number; cursor?: string | null },
 ): Paginated<Product> {
-  const first = options?.first ?? DEFAULT_PAGE_SIZE;
+  const first = options?.first ?? PRODUCTS_PAGE_SIZE;
   const parsedCursor = Number.parseInt(options?.cursor ?? "0", 10);
   const offset = Number.isFinite(parsedCursor) && parsedCursor > 0 ? parsedCursor : 0;
 

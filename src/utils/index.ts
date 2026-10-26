@@ -1,3 +1,4 @@
 export * from "./cn";
+export * from "./collection-query";
 export * from "./compute-badges";
 export * from "./format-money";
