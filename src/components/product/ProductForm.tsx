@@ -165,8 +165,10 @@ export function ProductForm({ product }: ProductFormProps) {
         {product.metafields.deliveryNote ?? ""}
       </p>
 
-      {/* Sticky mobile add-to-cart bar — shares the form's state via submit. */}
-      <div className="border-line bg-cream/95 fixed inset-x-0 bottom-0 z-30 flex items-center gap-4 border-t px-4 py-3 backdrop-blur sm:hidden">
+      {/* Sticky mobile add-to-cart bar — shares the form's state via submit.
+          Lifts above the cookie banner via --cookie-banner-h (see
+          CookieConsentBanner) so consent never covers the purchase action. */}
+      <div className="border-line bg-cream/95 fixed inset-x-0 bottom-[var(--cookie-banner-h,0px)] z-30 flex items-center gap-4 border-t px-4 py-3 backdrop-blur sm:hidden">
         <div className="min-w-0 flex-1">
           <p className="text-plum truncate text-sm font-medium">{product.title}</p>
           <Price price={price} compareAt={compareAt} className="text-sm" />

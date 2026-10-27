@@ -10,8 +10,10 @@ import { useFocusTrap } from "@/utils";
  * Mobile navigation: hamburger toggle (visible below xl) plus a drawer that
  * slides in from the left. The focus trap handles Escape-to-close plus Tab
  * containment; body scroll locks while open and focus returns to the toggle.
+ * `accountHref` is Shopify's hosted account URL when a store is configured,
+ * otherwise the local demo-mode /account page.
  */
-export function MobileMenu() {
+export function MobileMenu({ accountHref }: { accountHref: string | null }) {
   const [open, setOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -112,14 +114,26 @@ export function MobileMenu() {
                   <SearchIcon className="h-4 w-4" />
                   Search
                 </Link>
-                <Link
-                  href={ROUTES.ACCOUNT}
-                  className="text-plum hover:text-rose-ink flex min-h-11 items-center gap-2 text-sm font-medium transition-colors"
-                  onClick={close}
-                >
-                  <AccountIcon className="h-4 w-4" />
-                  Account
-                </Link>
+                {accountHref ? (
+                  <a
+                    href={accountHref}
+                    rel="noopener"
+                    className="text-plum hover:text-rose-ink flex min-h-11 items-center gap-2 text-sm font-medium transition-colors"
+                    onClick={close}
+                  >
+                    <AccountIcon className="h-4 w-4" />
+                    Account
+                  </a>
+                ) : (
+                  <Link
+                    href={ROUTES.ACCOUNT}
+                    className="text-plum hover:text-rose-ink flex min-h-11 items-center gap-2 text-sm font-medium transition-colors"
+                    onClick={close}
+                  >
+                    <AccountIcon className="h-4 w-4" />
+                    Account
+                  </Link>
+                )}
               </div>
             </div>
           </div>

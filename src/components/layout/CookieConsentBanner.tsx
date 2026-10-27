@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useSyncExternalStore } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui";
 import { ROUTES } from "@/constants";
@@ -26,6 +26,7 @@ type CookieConsentBannerProps = {
  * refusal so no tracking script is ever loaded.
  */
 export function CookieConsentBanner({ klaviyoPublicKey }: CookieConsentBannerProps) {
+  const bannerRef = useRef<HTMLElement>(null);
   const consent = useSyncExternalStore(
     subscribeMarketingConsent,
     getMarketingConsentSnapshot,
@@ -38,12 +39,31 @@ export function CookieConsentBanner({ klaviyoPublicKey }: CookieConsentBannerPro
     }
   }, [consent, klaviyoPublicKey]);
 
+  // Publish the live banner height as --cookie-banner-h so bottom-fixed UI
+  // (the sticky add-to-cart bar) can sit above it instead of being covered.
+  // Cleared on unmount/decision, so the bar drops back to the viewport edge.
+  useEffect(() => {
+    if (consent !== "pending") return;
+    const element = bannerRef.current;
+    if (!element) return;
+    const root = document.documentElement;
+    const publish = () => root.style.setProperty("--cookie-banner-h", `${element.offsetHeight}px`);
+    publish();
+    const observer = new ResizeObserver(publish);
+    observer.observe(element);
+    return () => {
+      observer.disconnect();
+      root.style.setProperty("--cookie-banner-h", "0px");
+    };
+  }, [consent]);
+
   if (consent !== "pending") {
     return null;
   }
 
   return (
     <section
+      ref={bannerRef}
       aria-label="Cookie consent"
       className="border-line bg-blush text-plum shadow-soft fixed inset-x-0 bottom-0 z-40 border-t px-5 py-4 sm:px-6"
     >

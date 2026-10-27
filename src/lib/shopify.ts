@@ -38,6 +38,17 @@ export function isShopifyConfigured(): boolean {
   return Boolean(domain && accessToken);
 }
 
+/**
+ * Absolute URL of the store's hosted customer account page
+ * (https://<domain>/account), or null in demo mode. Header account links use
+ * this so a configured store always hands sign-in to Shopify.
+ */
+export function getShopifyAccountHref(): string | null {
+  const { domain, accessToken } = readEnv();
+  if (!domain || !accessToken) return null;
+  return `https://${normalizeDomain(domain)}/account`;
+}
+
 function normalizeDomain(domain: string): string {
   return domain.replace(/^https?:\/\//, "").replace(/\/+$/, "");
 }
