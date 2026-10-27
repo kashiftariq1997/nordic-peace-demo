@@ -5,56 +5,14 @@ import { Price } from "@/components/common";
 import { useCart } from "@/components/cart";
 import { Badge, Button } from "@/components/ui";
 import { FREE_SHIPPING_THRESHOLD } from "@/constants";
-import type { Product, ProductVariant } from "@/types";
-import { formatMoney } from "@/utils";
+import type { Product } from "@/types";
+import { defaultSelection, formatMoney, isValueAvailable, matchVariant } from "@/utils";
 
 type ProductFormProps = {
   product: Product;
 };
 
 type FormPhase = "idle" | "added";
-
-/** Default selection = first available variant (fallback: first variant). */
-function defaultSelection(product: Product): Record<string, string> {
-  const fromOptions = Object.fromEntries(
-    product.options.map((option) => [option.name, option.values[0] ?? ""]),
-  );
-  const source =
-    product.variants.find((variant) => variant.availableForSale) ?? product.variants[0];
-  if (!source) {
-    return fromOptions;
-  }
-  return {
-    ...fromOptions,
-    ...Object.fromEntries(source.selectedOptions.map((option) => [option.name, option.value])),
-  };
-}
-
-/** Is this option value buyable given the OTHER current selections? */
-function isValueAvailable(
-  product: Product,
-  selected: Record<string, string>,
-  optionName: string,
-  value: string,
-): boolean {
-  return product.variants.some(
-    (variant) =>
-      variant.availableForSale &&
-      variant.selectedOptions.every((option) =>
-        option.name === optionName
-          ? option.value === value
-          : selected[option.name] === option.value,
-      ),
-  );
-}
-
-function matchVariant(product: Product, selected: Record<string, string>): ProductVariant | null {
-  return (
-    product.variants.find((variant) =>
-      variant.selectedOptions.every((option) => selected[option.name] === option.value),
-    ) ?? null
-  );
-}
 
 /**
  * Product purchase form (spec Steps A+B) — variant selectors with

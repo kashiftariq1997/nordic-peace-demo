@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui";
 import { Price } from "./Price";
+import { QuickAdd } from "./QuickAdd";
 import { WishlistButton } from "./WishlistButton";
 import { ROUTES } from "@/constants";
 import type { Product } from "@/types";
@@ -17,10 +18,11 @@ export type ProductCardProps = {
 const DEFAULT_SIZES = "(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw";
 
 /**
- * Product card — image, badges, title, price, wishlist heart. Used on home,
- * collection, search and wishlist grids. Server Component by default; the
- * heart is a client child (sibling of the link — never nested inside it).
- * Mock art is local SVG — next/image serves .svg srcs unoptimized automatically.
+ * Product card — image, badges, title, price, quick-add, wishlist heart.
+ * Used on home, collection, search and wishlist grids. Server Component by
+ * default; quick-add and the heart are client children (siblings of the
+ * link — never nested inside it). Mock art is local SVG — next/image serves
+ * .svg srcs unoptimized automatically.
  */
 export function ProductCard({ product, className, sizes = DEFAULT_SIZES }: ProductCardProps) {
   const compareAt = product.variants.find((variant) => variant.compareAtPrice)?.compareAtPrice;
@@ -68,6 +70,7 @@ export function ProductCard({ product, className, sizes = DEFAULT_SIZES }: Produ
         </div>
       </Link>
 
+      <QuickAdd product={product} />
       <WishlistButton
         handle={product.handle}
         title={product.title}
