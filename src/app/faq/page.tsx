@@ -9,6 +9,7 @@ import { FAQ_ITEMS, POLICIES, ROUTES } from "@/constants";
 export const metadata: Metadata = {
   title: "FAQ",
   description: "Shipping, returns, sizing and care — the quick answers before you ask.",
+  alternates: { canonical: "/faq" },
 };
 
 export default function FaqPage() {

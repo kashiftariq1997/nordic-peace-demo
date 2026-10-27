@@ -1,3 +1,5 @@
+export { PRODUCTS_TAG } from "./products";
+export { COLLECTIONS_TAG } from "./collections";
 export {
   getProducts,
   getProduct,

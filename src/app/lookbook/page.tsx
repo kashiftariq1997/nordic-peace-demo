@@ -12,6 +12,7 @@ import { cn } from "@/utils";
 export const metadata: Metadata = {
   title: "Lookbook",
   description: "The Nordic Peace worlds, season by season — pajamas, bedding, vanity and gifts.",
+  alternates: { canonical: "/lookbook" },
 };
 
 /** Pieces shown in the closing "featured in the edit" rail. */

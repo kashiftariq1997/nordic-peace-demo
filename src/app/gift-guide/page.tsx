@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   title: "Gift Guide",
   description:
     "Thoughtful little luxuries under $50, vanity treasures and soft layers — gifts from Nordic Peace.",
+  alternates: { canonical: "/gift-guide" },
 };
 
 export default async function GiftGuidePage() {

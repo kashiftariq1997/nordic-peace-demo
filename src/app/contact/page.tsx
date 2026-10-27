@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "Contact",
   description:
     "Questions about an order, sizing or anything else — we reply within two business days.",
+  alternates: { canonical: "/contact" },
 };
 
 type ContactDetail = {

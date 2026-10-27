@@ -14,6 +14,7 @@ import { getBestsellers, getCollections, getProducts } from "@/services";
 export const metadata: Metadata = {
   title: SITE_NAME,
   description: SITE_DESCRIPTION,
+  alternates: { canonical: "/" },
 };
 
 const FEATURED_COLLECTION_HANDLES = ["pajama-sets", "cozy-home", "vanity-edit"] as const;

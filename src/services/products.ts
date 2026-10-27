@@ -16,15 +16,15 @@ import { fetchProductByHandle, fetchProductsScoped } from "@/services/shopify-qu
 
 /**
  * Cached product queries. Both paths (Shopify API and mock fallback) share the
- * same filter/sort/pagination helpers and the same cache tags, so webhooks
- * tagged "products" (Phase 6) revalidate whichever path is live.
+ * same filter/sort/pagination helpers and the same cache tags, so the
+ * /api/revalidate webhook refreshes whichever path is live.
  *
  * Internal `loadProducts` / `loadProduct` are uncached so the cached public
  * functions never nest ("use cache" functions must not call each other with
  * identical work); the public functions add cacheTag + cacheLife around them.
  */
 
-const PRODUCTS_TAG = "products";
+export const PRODUCTS_TAG = "products";
 const CATALOG_LIFE = "hours";
 
 async function loadProducts(params: ProductQueryParams): Promise<Paginated<Product>> {

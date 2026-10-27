@@ -14,14 +14,16 @@ type NewsletterFormProps = {
 };
 
 /**
- * Newsletter signup (posts to /api/newsletter — the Klaviyo endpoint arrives
- * in Phase 6; until then the API responds 404 and the error state shows).
- * Consent is explicit and required.
+ * Newsletter signup — posts to /api/newsletter, which subscribes the address
+ * through Klaviyo when keys are configured and answers `devMode` when they
+ * aren't (the success copy then says so honestly). Consent is explicit and
+ * required, both client- and server-side.
  */
 export function NewsletterForm({ source }: NewsletterFormProps) {
   const [email, setEmail] = useState("");
   const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<FormStatus>("idle");
+  const [devMode, setDevMode] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [consentError, setConsentError] = useState<string | null>(null);
 
@@ -45,6 +47,8 @@ export function NewsletterForm({ source }: NewsletterFormProps) {
       if (!response.ok) {
         throw new Error(`Newsletter signup failed with status ${response.status}`);
       }
+      const data = (await response.json()) as { devMode?: boolean };
+      setDevMode(data.devMode === true);
       setStatus("success");
       setEmail("");
       setConsent(false);
@@ -59,7 +63,8 @@ export function NewsletterForm({ source }: NewsletterFormProps) {
         className="border-line bg-cream text-plum rounded-3xl border px-5 py-4 text-sm"
         role="status"
       >
-        You&apos;re on the list — welcome. (Demo: no emails are actually sent yet.)
+        You&apos;re on the list — welcome.
+        {devMode ? " (Demo mode: no emails are actually sent yet.)" : ""}
       </p>
     );
   }

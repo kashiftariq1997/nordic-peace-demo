@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: "Our Story",
   description:
     "How Nordic Peace began — a small studio making soft, romantic pieces for slow mornings and unhurried nights.",
+  alternates: { canonical: "/our-story" },
 };
 
 const PRINCIPLES = [

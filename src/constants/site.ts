@@ -2,6 +2,12 @@ import { ROUTES } from "./routes";
 
 export const SITE_NAME = "Nordic Peace";
 
+/**
+ * Absolute site origin — powers metadataBase, canonical URLs, the sitemap,
+ * robots.txt and Open Graph tags. Override with NEXT_PUBLIC_SITE_URL in env.
+ */
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://nordicpeace.com";
+
 /** Public contact address — shown on the contact page and linked from FAQs. */
 export const SITE_EMAIL = "hello@nordicpeace.com";
 

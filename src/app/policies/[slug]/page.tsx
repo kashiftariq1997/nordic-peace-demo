@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ContentHero } from "@/components/content";
 import { Container } from "@/components/layout";
+import { BreadcrumbJsonLd } from "@/components/seo";
 import { POLICIES, POLICY_SLUGS, ROUTES, getPolicy } from "@/constants";
 
 type Props = PageProps<"/policies/[slug]">;
@@ -18,7 +19,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!policy) {
     return { title: "Policy not found" };
   }
-  return { title: policy.title, description: policy.description };
+  return {
+    title: policy.title,
+    description: policy.description,
+    alternates: { canonical: ROUTES.policy(slug) },
+  };
 }
 
 export default async function PolicyPage({ params }: Props) {
@@ -30,6 +35,12 @@ export default async function PolicyPage({ params }: Props) {
 
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", path: ROUTES.HOME },
+          { name: policy.title, path: ROUTES.policy(slug) },
+        ]}
+      />
       <ContentHero eyebrow="Legal" title={policy.title} lede={policy.description} />
 
       <section className="bg-cream py-14 sm:py-16">

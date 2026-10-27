@@ -7,6 +7,8 @@ import {
   CollectionResultsSkeleton,
 } from "@/components/collection";
 import { Container } from "@/components/layout";
+import { BreadcrumbJsonLd } from "@/components/seo";
+import { ROUTES } from "@/constants";
 import { ALL_COLLECTION_HANDLE, getCollection, getCollections } from "@/services";
 
 type Props = PageProps<"/collections/[handle]">;
@@ -26,7 +28,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!collection) {
     return { title: "Collection not found" };
   }
-  return { title: collection.title, description: collection.description };
+  return {
+    title: collection.title,
+    description: collection.description,
+    alternates: { canonical: ROUTES.collection(handle) },
+  };
 }
 
 export default async function CollectionPage({ params, searchParams }: Props) {
@@ -38,6 +44,12 @@ export default async function CollectionPage({ params, searchParams }: Props) {
 
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", path: ROUTES.HOME },
+          { name: collection.title, path: ROUTES.collection(handle) },
+        ]}
+      />
       <CollectionHero collection={collection} />
       {/* searchParams live only inside CollectionResults, behind Suspense, so
           the hero and page chrome stay part of the prerendered static shell. */}

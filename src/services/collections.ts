@@ -7,11 +7,11 @@ import { fetchCollectionByHandle, fetchCollections } from "@/services/shopify-qu
 import { getProducts } from "@/services/products";
 
 /**
- * Cached collection queries. Tagged "collections" (webhooks revalidate in
- * Phase 6); product counts on the mock path are computed from membership.
+ * Cached collection queries. Tagged "collections" (the /api/revalidate
+ * webhook refreshes it); product counts on the mock path use membership.
  */
 
-const COLLECTIONS_TAG = "collections";
+export const COLLECTIONS_TAG = "collections";
 const CATALOG_LIFE = "hours";
 
 /** The virtual "all" collection — every product, no physical Shopify record. */

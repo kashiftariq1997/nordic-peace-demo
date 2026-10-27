@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
-import { AnnouncementBar, Footer, Header } from "@/components/layout";
-import { SITE_DESCRIPTION, SITE_NAME } from "@/constants";
+import { AnnouncementBar, CookieConsentBanner, Footer, Header } from "@/components/layout";
+import { OrganizationJsonLd } from "@/components/seo";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/constants";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -19,11 +20,20 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     default: SITE_NAME,
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    siteName: SITE_NAME,
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -42,6 +52,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {children}
         </main>
         <Footer />
+        <CookieConsentBanner klaviyoPublicKey={process.env.KLAVIYO_PUBLIC_KEY ?? null} />
+        <OrganizationJsonLd />
       </body>
     </html>
   );

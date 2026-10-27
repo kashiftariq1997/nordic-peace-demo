@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button, Input } from "@/components/ui";
 import { isEmail } from "@/utils";
 
-type FormStatus = "idle" | "loading" | "success" | "error";
+type FormStatus = "idle" | "success";
 
 type FieldErrors = {
   name?: string;
@@ -19,9 +19,9 @@ const TEXTAREA_CLASSES = {
 } as const;
 
 /**
- * Contact form (posts to /api/contact — the endpoint arrives in Phase 6;
- * until then the API responds 404 and the error state shows, same as the
- * newsletter signup). Client-side validation keeps the demo fully usable.
+ * Contact form — client-side validation with a local success state. Per the
+ * spec there is no backend promise here: nothing is ever sent anywhere, so
+ * the demo stays fully usable without an API surface.
  */
 export function ContactForm() {
   const [name, setName] = useState("");
@@ -34,7 +34,7 @@ export function ContactForm() {
     setErrors((current) => (current[field] ? { ...current, [field]: undefined } : current));
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const nextErrors: FieldErrors = {};
@@ -48,27 +48,10 @@ export function ContactForm() {
       return;
     }
 
-    setStatus("loading");
-    try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: name.trim(),
-          email: email.trim(),
-          message: message.trim(),
-        }),
-      });
-      if (!response.ok) {
-        throw new Error(`Contact submission failed with status ${response.status}`);
-      }
-      setStatus("success");
-      setName("");
-      setEmail("");
-      setMessage("");
-    } catch {
-      setStatus("error");
-    }
+    setStatus("success");
+    setName("");
+    setEmail("");
+    setMessage("");
   };
 
   if (status === "success") {
@@ -166,19 +149,9 @@ export function ContactForm() {
         </p>
       )}
 
-      <Button type="submit" disabled={status === "loading"} className="self-start">
-        {status === "loading" ? "Sending…" : "Send message"}
+      <Button type="submit" className="self-start">
+        Send message
       </Button>
-
-      <p aria-live="polite" className="sr-only">
-        {status === "error" ? "Something went wrong. Please try again." : ""}
-      </p>
-
-      {status === "error" && (
-        <p className="text-rose-ink text-sm" role="alert">
-          Something went wrong. Please try again, or email us directly.
-        </p>
-      )}
     </form>
   );
 }
