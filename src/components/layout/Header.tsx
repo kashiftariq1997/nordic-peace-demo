@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { AccountIcon, BagIcon, SearchIcon } from "@/icons";
+import { CartBadge } from "@/components/cart";
+import { AccountIcon, SearchIcon } from "@/icons";
 import { NAV_LINKS, ROUTES, SITE_NAME } from "@/constants";
 import { MobileMenu } from "./MobileMenu";
 
 /**
- * Sticky site header. Server Component — interactivity lives in MobileMenu.
- * The cart badge is static until the cart provider lands (Phase 4), where it
- * becomes a client component driven by cart state.
+ * Sticky site header. Server Component — the cart badge is a client child
+ * driven by the cart provider; interactivity lives in MobileMenu.
  */
 export function Header() {
   return (
@@ -48,20 +48,7 @@ export function Header() {
           >
             <AccountIcon className="h-5 w-5" />
           </Link>
-          {/* Cart count + drawer arrive in Phase 4 (client cart provider). */}
-          <button
-            type="button"
-            aria-label="Cart, 0 items"
-            className="text-plum hover:text-rose-ink relative flex h-11 w-11 items-center justify-center transition-colors"
-          >
-            <BagIcon className="h-5 w-5" />
-            <span
-              aria-hidden="true"
-              className="bg-rose-ink text-cream absolute top-1.5 right-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full px-1 text-[11px] leading-none font-medium"
-            >
-              0
-            </span>
-          </button>
+          <CartBadge />
         </div>
       </div>
     </header>

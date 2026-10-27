@@ -2,10 +2,11 @@
 
 import { useState, type FormEvent } from "react";
 import { Price } from "@/components/common";
+import { useCart } from "@/components/cart";
 import { Badge, Button } from "@/components/ui";
 import { FREE_SHIPPING_THRESHOLD } from "@/constants";
 import type { Product, ProductVariant } from "@/types";
-import { formatMoney, trackAddedToCart } from "@/utils";
+import { formatMoney } from "@/utils";
 
 type ProductFormProps = {
   product: Product;
@@ -56,18 +57,17 @@ function matchVariant(product: Product, selected: Record<string, string>): Produ
 }
 
 /**
- * Product purchase form (spec Step A) — variant selectors with unavailable
- * states, quantity stepper, price that follows the selected variant, Add to
- * Cart with success feedback, and a fixed mobile sticky bar.
- *
- * Cart persistence arrives in Step B: `handleAdd` currently fires the
- * consent-gated Added to Cart event and local feedback only — Step B
- * replaces that seam with the cart provider's line-add + drawer open.
+ * Product purchase form (spec Steps A+B) — variant selectors with
+ * unavailable states, quantity stepper, price that follows the selected
+ * variant, Add to Cart (goes through the cart provider: optimistic line,
+ * drawer opens, Added to Cart fires when the server confirms), and a fixed
+ * mobile sticky bar.
  */
 export function ProductForm({ product }: ProductFormProps) {
   const [selected, setSelected] = useState<Record<string, string>>(() => defaultSelection(product));
   const [quantity, setQuantity] = useState(1);
   const [phase, setPhase] = useState<FormPhase>("idle");
+  const { addLine } = useCart();
 
   const variant = matchVariant(product, selected);
   const soldOut = !product.availableForSale || !variant?.availableForSale;
@@ -75,21 +75,32 @@ export function ProductForm({ product }: ProductFormProps) {
   const maxQuantity = soldOut ? 1 : Math.min(99, Math.max(1, variant?.quantityAvailable ?? 99));
   const clampedQuantity = Math.min(quantity, maxQuantity);
 
-  const handleAdd = (event: FormEvent<HTMLFormElement>) => {
+  const handleAdd = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (soldOut || !variant) return;
 
-    // STEP A SEAM — Step B's cart provider replaces this local feedback with
-    // cartLinesAdd + opening the cart drawer. The tracking call is final.
-    trackAddedToCart({
-      id: product.id,
-      name: product.title,
-      handle: product.handle,
-      price: variant.price.amount,
+    const added = await addLine({
+      merchandiseId: variant.id,
       quantity: clampedQuantity,
+      preview: {
+        productId: product.id,
+        handle: product.handle,
+        productTitle: product.title,
+        variantTitle: variant.title,
+        imageUrl: product.featuredImage?.url ?? null,
+        imageAlt: product.featuredImage?.altText ?? product.title,
+        unitPrice: variant.price,
+        compareAtPrice: variant.compareAtPrice,
+        maxQuantity:
+          variant.quantityAvailable && variant.quantityAvailable > 0
+            ? variant.quantityAvailable
+            : null,
+      },
     });
-    setPhase("added");
-    window.setTimeout(() => setPhase("idle"), 2500);
+    if (added) {
+      setPhase("added");
+      window.setTimeout(() => setPhase("idle"), 2500);
+    }
   };
 
   const price = variant?.price ?? product.priceRange.min;
