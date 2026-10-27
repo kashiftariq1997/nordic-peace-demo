@@ -1,5 +1,3 @@
-import { FREE_SHIPPING_THRESHOLD } from "./site";
-
 export type FaqItem = {
   readonly question: string;
   readonly answer: string;
@@ -7,7 +5,9 @@ export type FaqItem = {
 
 /**
  * FAQ content shown on /faq (sample copy — adjust freely). Answers that go
- * deeper link to the full policy pages from the page itself.
+ * deeper link to the full policy pages from the page itself. The literal
+ * `{threshold}` marker is substituted at render with the live free-shipping
+ * amount in the store's currency (lib/shipping).
  */
 export const FAQ_ITEMS: readonly FaqItem[] = [
   {
@@ -17,7 +17,8 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
   },
   {
     question: "Do you offer free shipping?",
-    answer: `Yes — orders over $${FREE_SHIPPING_THRESHOLD} ship free within the US. Below that, a flat rate is shown at checkout before you pay anything.`,
+    answer:
+      "Yes — orders over {threshold} ship free within the US. Below that, a flat rate is shown at checkout before you pay anything.",
   },
   {
     question: "Do you ship internationally?",

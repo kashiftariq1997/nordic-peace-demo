@@ -2,14 +2,18 @@
 
 import { useState } from "react";
 import { BowIcon, PauseIcon, PlayIcon } from "@/icons";
-import { ANNOUNCEMENT_MESSAGES } from "@/constants";
+
+type AnnouncementBarProps = {
+  /** Marquee messages, built server-side (live threshold + store currency). */
+  messages: readonly string[];
+};
 
 /**
  * Slow marquee announcement bar. The visible track is hidden from assistive
  * tech (duplicated for the loop) and a visually-hidden copy carries the
  * messages; the pause button satisfies WCAG 2.2.2 (pause/stop/hide).
  */
-export function AnnouncementBar() {
+export function AnnouncementBar({ messages }: AnnouncementBarProps) {
   const [paused, setPaused] = useState(false);
 
   return (
@@ -21,7 +25,7 @@ export function AnnouncementBar() {
       >
         {[0, 1].map((copy) => (
           <div key={copy} className="flex shrink-0 items-center gap-10 pr-10">
-            {ANNOUNCEMENT_MESSAGES.map((message) => (
+            {messages.map((message) => (
               <span
                 key={message}
                 className="flex items-center gap-3 text-xs font-medium tracking-[0.18em] whitespace-nowrap uppercase sm:text-[13px]"
@@ -34,7 +38,7 @@ export function AnnouncementBar() {
         ))}
       </div>
 
-      <p className="sr-only">{ANNOUNCEMENT_MESSAGES.join(". ")}.</p>
+      <p className="sr-only">{messages.join(". ")}.</p>
 
       <button
         type="button"

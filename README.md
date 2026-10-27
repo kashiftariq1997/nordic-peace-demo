@@ -42,6 +42,7 @@ missing Shopify or Klaviyo keys switch those integrations to their demo modes.
 | Variable                          | Purpose                                                                                                   |
 | --------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | `NEXT_PUBLIC_SITE_URL`            | Absolute origin for canonical URLs, sitemap, robots, Open Graph (falls back to `https://nordicpeace.com`) |
+| `FREE_SHIPPING_THRESHOLD`         | Free-shipping threshold **in the store's currency** (e.g. `1500` for PKR) — defaults to `75` when unset   |
 | `SHOPIFY_STORE_DOMAIN`            | Store domain, e.g. `your-store.myshopify.com`                                                             |
 | `SHOPIFY_STOREFRONT_ACCESS_TOKEN` | Storefront API access token                                                                               |
 | `SHOPIFY_API_VERSION`             | Storefront API version (default `2026-07`)                                                                |

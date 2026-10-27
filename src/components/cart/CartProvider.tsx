@@ -98,7 +98,14 @@ function optimisticRemove(current: CartState, lineId: string): CartState {
  * in localStorage; mock mode keeps its lines in a server cookie. Every
  * successful add fires the consent-gated Added to Cart event.
  */
-export function CartProvider({ children }: { children: ReactNode }) {
+export function CartProvider({
+  children,
+  freeShippingThreshold,
+}: {
+  children: ReactNode;
+  /** Live FREE_SHIPPING_THRESHOLD amount (store currency) — server-read env. */
+  freeShippingThreshold: number;
+}) {
   const [cart, setCartState] = useState<CartState>(() => emptyCart());
   const [isOpen, setIsOpen] = useState(false);
   const [toasts, setToasts] = useState<CartToast[]>([]);
@@ -269,7 +276,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   return (
     <CartContext.Provider value={value}>
       {children}
-      <CartDrawer />
+      <CartDrawer freeShippingThreshold={freeShippingThreshold} />
       <CartToasts toasts={toasts} onDismiss={dismissToast} />
     </CartContext.Provider>
   );

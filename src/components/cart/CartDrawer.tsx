@@ -16,7 +16,7 @@ import { FreeShippingProgress } from "./FreeShippingProgress";
  * open. Lines mutate optimistically through the cart provider; discount and
  * checkout live in the footer.
  */
-export function CartDrawer() {
+export function CartDrawer({ freeShippingThreshold }: { freeShippingThreshold: number }) {
   const { cart, isOpen, closeCart, applyDiscount } = useCart();
   const closeRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLElement>(null);
@@ -97,7 +97,11 @@ export function CartDrawer() {
           </button>
         </div>
 
-        <FreeShippingProgress subtotal={cart.subtotal} />
+        {/* Hidden while empty: an empty bag has no Shopify money to format
+            (the local zero would claim the wrong currency). */}
+        {cart.lines.length > 0 ? (
+          <FreeShippingProgress subtotal={cart.subtotal} threshold={freeShippingThreshold} />
+        ) : null}
 
         <div className="flex-1 overflow-y-auto px-5 py-4">
           {cart.lines.length === 0 ? (
@@ -160,16 +164,18 @@ export function CartDrawer() {
             </div>
           ) : null}
 
-          <div className="flex flex-col gap-2 text-sm">
-            <div className="text-plum-soft flex items-center justify-between">
-              <span>Subtotal</span>
-              <span className="text-plum">{formatMoney(cart.subtotal)}</span>
+          {cart.lines.length > 0 ? (
+            <div className="flex flex-col gap-2 text-sm">
+              <div className="text-plum-soft flex items-center justify-between">
+                <span>Subtotal</span>
+                <span className="text-plum">{formatMoney(cart.subtotal)}</span>
+              </div>
+              <div className="text-plum flex items-center justify-between text-base font-medium">
+                <span>Total</span>
+                <span>{formatMoney(cart.total)}</span>
+              </div>
             </div>
-            <div className="text-plum flex items-center justify-between text-base font-medium">
-              <span>Total</span>
-              <span>{formatMoney(cart.total)}</span>
-            </div>
-          </div>
+          ) : null}
 
           {cart.checkoutUrl ? (
             <a

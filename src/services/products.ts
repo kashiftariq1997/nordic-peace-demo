@@ -99,7 +99,7 @@ export async function getBestsellers(first = 4): Promise<Product[]> {
 
 /**
  * Distinct filter values for the collection sidebar, derived from the live
- * catalog (types, sizes, colors, price bounds).
+ * catalog (types, sizes, colors, price bounds and their currency).
  */
 export async function getCatalogFilterOptions(collectionHandle?: string): Promise<{
   productTypes: string[];
@@ -107,6 +107,7 @@ export async function getCatalogFilterOptions(collectionHandle?: string): Promis
   colors: string[];
   priceMin: number;
   priceMax: number;
+  currencyCode: string;
 }> {
   "use cache";
   cacheTag(PRODUCTS_TAG);
@@ -137,5 +138,21 @@ export async function getCatalogFilterOptions(collectionHandle?: string): Promis
     colors: [...colors],
     priceMin: Number.isFinite(priceMin) ? priceMin : 0,
     priceMax: Number.isFinite(priceMax) ? priceMax : 0,
+    currencyCode: page.items[0]?.priceRange.min.currencyCode ?? "USD",
   };
+}
+
+/**
+ * Storefront currency for site-wide copy (announcement bar, footer, FAQ).
+ * The Storefront API exposes no shop-level currency field, so it's derived
+ * from the live catalog — mock products are USD, real products carry the
+ * store's own currency. Empty catalog falls back to USD.
+ */
+export async function getShopCurrency(): Promise<string> {
+  "use cache";
+  cacheTag(PRODUCTS_TAG);
+  cacheLife(CATALOG_LIFE);
+
+  const page = await loadProducts({ first: 1 });
+  return page.items[0]?.priceRange.min.currencyCode ?? "USD";
 }

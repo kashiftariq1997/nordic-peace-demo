@@ -5,6 +5,8 @@ import { Container } from "@/components/layout";
 import { buttonClassName } from "@/components/ui";
 import { ChevronIcon } from "@/icons";
 import { FAQ_ITEMS, POLICIES, ROUTES } from "@/constants";
+import { formatFreeShippingThreshold } from "@/lib";
+import { getShopCurrency } from "@/services";
 
 export const metadata: Metadata = {
   title: "FAQ",
@@ -12,7 +14,10 @@ export const metadata: Metadata = {
   alternates: { canonical: "/faq" },
 };
 
-export default function FaqPage() {
+export default async function FaqPage() {
+  // {threshold} in FAQ copy → live env amount in the store's Shopify currency.
+  const thresholdCopy = formatFreeShippingThreshold(await getShopCurrency());
+
   return (
     <>
       <ContentHero
@@ -31,7 +36,9 @@ export default function FaqPage() {
                     {item.question}
                     <ChevronIcon className="text-rose-ink h-4 w-4 shrink-0 transition-transform duration-200 group-open:rotate-180" />
                   </summary>
-                  <p className="text-plum-soft pb-5 text-sm leading-6">{item.answer}</p>
+                  <p className="text-plum-soft pb-5 text-sm leading-6">
+                    {item.answer.replace("{threshold}", thresholdCopy)}
+                  </p>
                 </details>
               ))}
             </div>

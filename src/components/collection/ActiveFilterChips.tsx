@@ -7,11 +7,18 @@ export type ActiveFilterChipsProps = {
   pathname: string;
   filters: ProductFilters;
   sort: SortOption;
+  /** Store currency for price chips (from the live catalog). */
+  currencyCode: string;
 };
 
 /** Chips for each active facet — removing one chip drops just that value. */
-export function ActiveFilterChips({ pathname, filters, sort }: ActiveFilterChipsProps) {
-  const chips = buildFilterChips(filters);
+export function ActiveFilterChips({
+  pathname,
+  filters,
+  sort,
+  currencyCode,
+}: ActiveFilterChipsProps) {
+  const chips = buildFilterChips(filters, currencyCode);
   if (chips.length === 0) {
     return null;
   }

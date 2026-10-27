@@ -15,6 +15,7 @@ import {
 } from "@/components/product";
 import { BreadcrumbJsonLd, ProductJsonLd } from "@/components/seo";
 import { ROUTES } from "@/constants";
+import { getFreeShippingThreshold } from "@/lib";
 import { getCollection, getProduct, getProducts, getProductsByHandles } from "@/services";
 import type { Product } from "@/types";
 
@@ -100,7 +101,7 @@ async function ProductContent({ params }: { params: Promise<{ handle: string }> 
         <Container>
           <div className="grid gap-8 lg:grid-cols-2 lg:gap-14">
             <ProductGallery images={product.images} title={product.title} />
-            <ProductForm product={product} />
+            <ProductForm product={product} freeShippingThreshold={getFreeShippingThreshold()} />
           </div>
 
           {accordionItems.length > 0 ? (

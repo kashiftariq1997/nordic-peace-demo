@@ -1,5 +1,3 @@
-import { FREE_SHIPPING_THRESHOLD } from "./site";
-
 export type PolicySection = {
   readonly heading: string;
   readonly paragraphs: readonly string[];
@@ -18,7 +16,9 @@ const UPDATED = "Last updated October 2026";
 
 /**
  * Static policy content for /policies/[slug] (sample copy — have real legal
- * review before launch). Slugs match the footer links in site.ts.
+ * review before launch). Slugs match the footer links in site.ts. The literal
+ * `{threshold}` marker is substituted at render with the live free-shipping
+ * amount in the store's currency (lib/shipping).
  */
 export const POLICIES: readonly Policy[] = [
   {
@@ -37,7 +37,7 @@ export const POLICIES: readonly Policy[] = [
       {
         heading: "Rates & free shipping",
         paragraphs: [
-          `Orders over $${FREE_SHIPPING_THRESHOLD} ship free within the United States. Below the threshold, a flat $6 rate applies.`,
+          "Orders over {threshold} ship free within the United States. Below the threshold, a flat shipping rate applies.",
           "Expedited options and their costs are shown at checkout before you confirm your order.",
         ],
       },

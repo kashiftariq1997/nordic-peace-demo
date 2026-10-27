@@ -53,7 +53,12 @@ export async function CollectionResults({ handle, searchParams }: CollectionResu
           <SortSelect sort={query.sort} filters={query.filters} pathname={pathname} />
         </div>
 
-        <ActiveFilterChips pathname={pathname} filters={query.filters} sort={query.sort} />
+        <ActiveFilterChips
+          pathname={pathname}
+          filters={query.filters}
+          sort={query.sort}
+          currencyCode={options.currencyCode}
+        />
 
         {page.items.length === 0 ? (
           <CollectionEmptyState pathname={pathname} sort={query.sort} />

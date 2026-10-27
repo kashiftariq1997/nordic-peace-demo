@@ -1,15 +1,16 @@
-import { FREE_SHIPPING_THRESHOLD } from "@/constants";
 import type { Money } from "@/types";
 import { formatMoney } from "@/utils";
 
 type FreeShippingProgressProps = {
   subtotal: Money;
+  /** FREE_SHIPPING_THRESHOLD amount in the cart's currency (server-read env). */
+  threshold: number;
 };
 
-/** Free-shipping progress bar (threshold from FREE_SHIPPING_THRESHOLD). */
-export function FreeShippingProgress({ subtotal }: FreeShippingProgressProps) {
-  const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal.amount);
-  const progress = Math.min(100, Math.round((subtotal.amount / FREE_SHIPPING_THRESHOLD) * 100));
+/** Free-shipping progress bar — amount and currency both come from the cart. */
+export function FreeShippingProgress({ subtotal, threshold }: FreeShippingProgressProps) {
+  const remaining = Math.max(0, threshold - subtotal.amount);
+  const progress = Math.min(100, Math.round((subtotal.amount / threshold) * 100));
   const unlocked = remaining === 0;
 
   return (

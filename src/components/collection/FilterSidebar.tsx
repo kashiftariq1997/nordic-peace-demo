@@ -4,7 +4,7 @@ import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronIcon } from "@/icons";
 import type { CatalogFilterOptions, ProductFilters, SortOption } from "@/types";
-import { buildCollectionQuery, countActiveFilters, toggleListValue } from "@/utils";
+import { buildCollectionQuery, countActiveFilters, formatMoney, toggleListValue } from "@/utils";
 
 /** Decorative swatch colors for known catalog colors (line as safe fallback). */
 const COLOR_SWATCHES: Record<string, string> = {
@@ -206,8 +206,11 @@ function FiltersPanel({ options, active, onChange }: FiltersPanelProps) {
               name="min"
               min={0}
               inputMode="numeric"
-              aria-label="Minimum price in dollars"
-              placeholder={`$${options.priceMin}`}
+              aria-label={`Minimum price in ${options.currencyCode}`}
+              placeholder={formatMoney({
+                amount: options.priceMin,
+                currencyCode: options.currencyCode,
+              })}
               defaultValue={active.priceMin ?? ""}
               className="border-line text-plum placeholder:text-plum-soft h-11 w-full min-w-0 rounded-full border bg-white px-4 text-sm"
             />
@@ -219,8 +222,11 @@ function FiltersPanel({ options, active, onChange }: FiltersPanelProps) {
               name="max"
               min={0}
               inputMode="numeric"
-              aria-label="Maximum price in dollars"
-              placeholder={`$${options.priceMax}`}
+              aria-label={`Maximum price in ${options.currencyCode}`}
+              placeholder={formatMoney({
+                amount: options.priceMax,
+                currencyCode: options.currencyCode,
+              })}
               defaultValue={active.priceMax ?? ""}
               className="border-line text-plum placeholder:text-plum-soft h-11 w-full min-w-0 rounded-full border bg-white px-4 text-sm"
             />

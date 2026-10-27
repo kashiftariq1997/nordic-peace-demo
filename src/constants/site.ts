@@ -11,21 +11,28 @@ export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://nordicpeace
 /** Public contact address — shown on the contact page and linked from FAQs. */
 export const SITE_EMAIL = "hello@nordicpeace.com";
 
-/** Free-shipping threshold in USD — read from here everywhere (announcement bar, cart, policies). */
-export const FREE_SHIPPING_THRESHOLD = 75;
+/**
+ * Default free-shipping threshold, in the store's currency. The live value is
+ * read from the FREE_SHIPPING_THRESHOLD env var server-side — see
+ * `lib/shipping.ts` — so client bundles never touch process.env.
+ */
+export const FREE_SHIPPING_THRESHOLD_DEFAULT = 75;
 
 export const SITE_DESCRIPTION =
   "Soft, romantic essentials for slow mornings and unhurried nights — pajama sets, cozy bedding, vanity pieces and little gifts.";
 
 /**
- * Marquee messages for the announcement bar. Sample copy — adjust freely;
- * the free-shipping message derives its amount from FREE_SHIPPING_THRESHOLD.
+ * Marquee messages for the announcement bar (sample copy — adjust freely).
+ * The shipping message takes the pre-formatted threshold so the server can
+ * apply the live env value and the store's Shopify-returned currency.
  */
-export const ANNOUNCEMENT_MESSAGES = [
-  `Complimentary shipping on orders over $${FREE_SHIPPING_THRESHOLD}`,
-  "Pajama sets for slow mornings",
-  "The gift guide — something soft for everyone",
-] as const;
+export function buildAnnouncementMessages(freeShippingCopy: string): readonly string[] {
+  return [
+    `Complimentary shipping on orders over ${freeShippingCopy}`,
+    "Pajama sets for slow mornings",
+    "The gift guide — something soft for everyone",
+  ];
+}
 
 export type NavLink = {
   readonly label: string;

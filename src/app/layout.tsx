@@ -3,7 +3,10 @@ import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import { CartProvider } from "@/components/cart";
 import { AnnouncementBar, CookieConsentBanner, Footer, Header } from "@/components/layout";
 import { OrganizationJsonLd } from "@/components/seo";
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/constants";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, buildAnnouncementMessages } from "@/constants";
+import { getFreeShippingThreshold } from "@/lib";
+import { getShopCurrency } from "@/services";
+import { formatMoney } from "@/utils";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -37,18 +40,24 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  // Site-wide free-shipping copy: live env threshold, store currency from Shopify.
+  const freeShippingThreshold = getFreeShippingThreshold();
+  const announcementMessages = buildAnnouncementMessages(
+    formatMoney({ amount: freeShippingThreshold, currencyCode: await getShopCurrency() }),
+  );
+
   return (
     <html lang="en" className={`${cormorant.variable} ${dmSans.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
-        <CartProvider>
+        <CartProvider freeShippingThreshold={freeShippingThreshold}>
           <a
             href="#main"
             className="focus:bg-plum focus:text-cream sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-full focus:px-5 focus:py-3 focus:text-sm focus:font-medium"
           >
             Skip to content
           </a>
-          <AnnouncementBar />
+          <AnnouncementBar messages={announcementMessages} />
           <Header />
           <main id="main" className="flex-1">
             {children}

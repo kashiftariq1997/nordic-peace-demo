@@ -5,6 +5,8 @@ import { ContentHero } from "@/components/content";
 import { Container } from "@/components/layout";
 import { BreadcrumbJsonLd } from "@/components/seo";
 import { POLICIES, POLICY_SLUGS, ROUTES, getPolicy } from "@/constants";
+import { formatFreeShippingThreshold } from "@/lib";
+import { getShopCurrency } from "@/services";
 
 type Props = PageProps<"/policies/[slug]">;
 
@@ -32,6 +34,8 @@ export default async function PolicyPage({ params }: Props) {
   if (!policy) {
     notFound();
   }
+  // {threshold} in policy copy → live env amount in the store's Shopify currency.
+  const thresholdCopy = formatFreeShippingThreshold(await getShopCurrency());
 
   return (
     <>
@@ -55,7 +59,7 @@ export default async function PolicyPage({ params }: Props) {
                 <h2 className="font-heading text-plum text-2xl">{section.heading}</h2>
                 {section.paragraphs.map((paragraph) => (
                   <p key={paragraph} className="text-plum-soft text-sm leading-7">
-                    {paragraph}
+                    {paragraph.replace("{threshold}", thresholdCopy)}
                   </p>
                 ))}
               </section>

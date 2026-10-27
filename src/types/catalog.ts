@@ -41,6 +41,8 @@ export type CatalogFilterOptions = {
   colors: string[];
   priceMin: number;
   priceMax: number;
+  /** Currency of the price bounds, as returned by Shopify (mock: USD). */
+  currencyCode: string;
 };
 
 /** URL-backed state of the collection page (parsed from searchParams). */

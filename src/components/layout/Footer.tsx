@@ -2,12 +2,13 @@ import Link from "next/link";
 import { BowIcon } from "@/icons";
 import {
   FOOTER_LINK_COLUMNS,
-  FREE_SHIPPING_THRESHOLD,
   ROUTES,
   SITE_DESCRIPTION,
   SITE_NAME,
   SOCIAL_LINKS,
 } from "@/constants";
+import { formatFreeShippingThreshold } from "@/lib";
+import { getShopCurrency } from "@/services";
 import { NewsletterForm } from "./NewsletterForm";
 
 /**
@@ -26,6 +27,7 @@ async function getCopyrightYear(): Promise<number> {
 
 export async function Footer() {
   const year = await getCopyrightYear();
+  const freeShippingCopy = formatFreeShippingThreshold(await getShopCurrency());
 
   return (
     <footer className="border-line bg-blush border-t">
@@ -106,8 +108,8 @@ export async function Footer() {
         {/* Bottom bar */}
         <div className="border-line/80 text-plum-soft flex flex-col gap-3 border-t py-6 text-xs sm:flex-row sm:items-center sm:justify-between">
           <p>
-            Checkout is processed by Shopify · Complimentary shipping on orders over $
-            {FREE_SHIPPING_THRESHOLD}
+            Checkout is processed by Shopify · Complimentary shipping on orders over{" "}
+            {freeShippingCopy}
           </p>
           <p>
             © {year} {SITE_NAME}. All rights reserved.

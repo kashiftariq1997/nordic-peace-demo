@@ -4,12 +4,13 @@ import { useState, type FormEvent } from "react";
 import { Price } from "@/components/common";
 import { useCart } from "@/components/cart";
 import { Badge, Button } from "@/components/ui";
-import { FREE_SHIPPING_THRESHOLD } from "@/constants";
 import type { Product } from "@/types";
 import { defaultSelection, formatMoney, isValueAvailable, matchVariant } from "@/utils";
 
 type ProductFormProps = {
   product: Product;
+  /** FREE_SHIPPING_THRESHOLD amount in the product's currency (server-read env). */
+  freeShippingThreshold: number;
 };
 
 type FormPhase = "idle" | "added";
@@ -21,7 +22,7 @@ type FormPhase = "idle" | "added";
  * drawer opens, Added to Cart fires when the server confirms), and a fixed
  * mobile sticky bar.
  */
-export function ProductForm({ product }: ProductFormProps) {
+export function ProductForm({ product, freeShippingThreshold }: ProductFormProps) {
   const [selected, setSelected] = useState<Record<string, string>>(() => defaultSelection(product));
   const [quantity, setQuantity] = useState(1);
   const [phase, setPhase] = useState<FormPhase>("idle");
@@ -161,7 +162,8 @@ export function ProductForm({ product }: ProductFormProps) {
       </p>
 
       <p className="text-plum-soft text-xs leading-5">
-        Complimentary shipping on orders over ${FREE_SHIPPING_THRESHOLD}.{" "}
+        Complimentary shipping on orders over{" "}
+        {formatMoney({ amount: freeShippingThreshold, currencyCode: price.currencyCode })}.{" "}
         {product.metafields.deliveryNote ?? ""}
       </p>
 

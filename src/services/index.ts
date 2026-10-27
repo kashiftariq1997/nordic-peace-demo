@@ -6,5 +6,6 @@ export {
   getProductsByHandles,
   getBestsellers,
   getCatalogFilterOptions,
+  getShopCurrency,
 } from "./products";
 export { getCollections, getCollection, ALL_COLLECTION_HANDLE } from "./collections";

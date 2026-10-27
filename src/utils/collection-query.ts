@@ -1,4 +1,5 @@
 import type { CollectionQuery, ProductFilters, SortOption } from "@/types";
+import { formatMoney } from "./format-money";
 
 /**
  * Pure URL <-> filter-state helpers for the collection page. Used by BOTH the
@@ -103,7 +104,7 @@ export type FilterChip = {
 };
 
 /** Active-filter chips for the results toolbar — each removes just its own facet. */
-export function buildFilterChips(filters: ProductFilters): FilterChip[] {
+export function buildFilterChips(filters: ProductFilters, currencyCode: string): FilterChip[] {
   const chips: FilterChip[] = [];
 
   const productTypes = filters.productTypes ?? [];
@@ -136,11 +137,14 @@ export function buildFilterChips(filters: ProductFilters): FilterChip[] {
   if (filters.priceMin !== undefined || filters.priceMax !== undefined) {
     let label: string;
     if (filters.priceMin !== undefined && filters.priceMax !== undefined) {
-      label = `$${filters.priceMin}–$${filters.priceMax}`;
+      label = `${formatMoney({ amount: filters.priceMin, currencyCode })}–${formatMoney({
+        amount: filters.priceMax,
+        currencyCode,
+      })}`;
     } else if (filters.priceMin !== undefined) {
-      label = `From $${filters.priceMin}`;
+      label = `From ${formatMoney({ amount: filters.priceMin, currencyCode })}`;
     } else {
-      label = `Up to $${filters.priceMax}`;
+      label = `Up to ${formatMoney({ amount: filters.priceMax ?? 0, currencyCode })}`;
     }
     chips.push({
       key: "price",
