@@ -4,3 +4,4 @@ export * from "./Price";
 export * from "./ProductCard";
 export * from "./ProductGrid";
 export * from "./SectionHeader";
+export * from "./WishlistButton";

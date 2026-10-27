@@ -43,6 +43,13 @@ export const NAV_LINKS: readonly NavLink[] = [
   { label: "Our Story", href: ROUTES.OUR_STORY },
 ];
 
+/** Collection handles offered as suggestions on search/wishlist empty states. */
+export const SUGGESTED_COLLECTION_HANDLES: readonly string[] = [
+  "pajama-sets",
+  "cozy-home",
+  "vanity-edit",
+];
+
 /** Footer link columns. */
 export const FOOTER_LINK_COLUMNS: readonly {
   readonly title: string;
@@ -57,6 +64,7 @@ export const FOOTER_LINK_COLUMNS: readonly {
       { label: "Cozy Home", href: ROUTES.COLLECTION_COZY_HOME },
       { label: "Vanity Edit", href: ROUTES.COLLECTION_VANITY_EDIT },
       { label: "Gift Guide", href: ROUTES.GIFT_GUIDE },
+      { label: "Wishlist", href: ROUTES.WISHLIST },
     ],
   },
   {

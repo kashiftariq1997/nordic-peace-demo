@@ -3,6 +3,7 @@ export * from "./BagIcon";
 export * from "./BowIcon";
 export * from "./ChevronIcon";
 export * from "./CloseIcon";
+export * from "./HeartIcon";
 export * from "./MenuIcon";
 export * from "./PauseIcon";
 export * from "./PlayIcon";
