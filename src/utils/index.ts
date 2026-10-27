@@ -4,3 +4,4 @@ export * from "./compute-badges";
 export * from "./format-money";
 export * from "./is-email";
 export * from "./klaviyo";
+export * from "./recently-viewed";
