@@ -13,7 +13,7 @@ type FieldErrors = {
 };
 
 const TEXTAREA_CLASSES = {
-  base: "text-plum w-full rounded-3xl border bg-white px-5 py-4 text-sm transition-colors duration-200 placeholder:text-plum-soft/70",
+  base: "text-plum w-full rounded-3xl border bg-white px-5 py-4 text-sm transition-colors duration-200 placeholder:text-plum-soft",
   invalid: "border-rose-ink",
   valid: "border-line hover:border-blush-deep",
 } as const;

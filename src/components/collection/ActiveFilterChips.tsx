@@ -23,7 +23,7 @@ export function ActiveFilterChips({ pathname, filters, sort }: ActiveFilterChips
           <Link
             href={`${pathname}${buildCollectionQuery({ filters: chip.filters, sort })}`}
             prefetch
-            className="border-line bg-blush text-plum hover:border-rose-ink hover:text-rose-ink inline-flex h-8 items-center gap-1.5 rounded-full border pr-2.5 pl-3 text-xs font-medium transition-colors"
+            className="border-line bg-blush text-plum hover:border-rose-ink hover:text-rose-ink inline-flex h-11 items-center gap-1.5 rounded-full border pr-2.5 pl-3 text-xs font-medium transition-colors"
           >
             {chip.label}
             <CloseIcon className="h-3.5 w-3.5" />
@@ -35,7 +35,7 @@ export function ActiveFilterChips({ pathname, filters, sort }: ActiveFilterChips
         <Link
           href={`${pathname}${buildCollectionQuery({ sort })}`}
           prefetch
-          className="text-plum-soft hover:text-rose-ink text-xs underline underline-offset-4 transition-colors"
+          className="text-plum-soft hover:text-rose-ink flex min-h-11 items-center text-xs underline underline-offset-4 transition-colors"
         >
           Clear all
         </Link>

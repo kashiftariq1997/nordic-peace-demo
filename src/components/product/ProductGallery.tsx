@@ -24,7 +24,7 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
   if (!current) {
     return (
       <div className="bg-blush flex aspect-4/5 items-center justify-center rounded-3xl">
-        <span className="font-heading text-rose-ink/40 text-4xl">Nordic Peace</span>
+        <span className="font-heading text-rose-ink text-4xl">Nordic Peace</span>
       </div>
     );
   }

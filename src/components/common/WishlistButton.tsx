@@ -35,12 +35,12 @@ export function WishlistButton({ handle, title, className }: WishlistButtonProps
       aria-label={saved ? `Remove ${title} from wishlist` : `Add ${title} to wishlist`}
       onClick={() => toggleWishlist(handle)}
       className={cn(
-        "bg-cream/85 text-plum hover:text-rose-ink flex h-9 w-9 items-center justify-center rounded-full backdrop-blur-sm transition-colors",
+        "bg-cream/85 text-plum hover:text-rose-ink flex h-11 w-11 items-center justify-center rounded-full backdrop-blur-sm transition-colors",
         saved && "text-rose-ink",
         className,
       )}
     >
-      <HeartIcon className="h-[18px] w-[18px]" filled={saved} />
+      <HeartIcon className="h-5 w-5" filled={saved} />
     </button>
   );
 }

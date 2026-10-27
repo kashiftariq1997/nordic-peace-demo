@@ -4,16 +4,23 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { CloseIcon, MenuIcon, SearchIcon, AccountIcon } from "@/icons";
 import { NAV_LINKS, ROUTES, SITE_NAME } from "@/constants";
+import { useFocusTrap } from "@/utils";
 
 /**
  * Mobile navigation: hamburger toggle (visible below xl) plus a drawer that
- * slides in from the left. Handles Escape-to-close, body scroll lock and
- * focus return to the toggle.
+ * slides in from the left. The focus trap handles Escape-to-close plus Tab
+ * containment; body scroll locks while open and focus returns to the toggle.
  */
 export function MobileMenu() {
   const [open, setOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  const close = () => {
+    setOpen(false);
+    toggleRef.current?.focus();
+  };
 
   useEffect(() => {
     if (!open) {
@@ -24,23 +31,13 @@ export function MobileMenu() {
     document.body.style.overflow = "hidden";
     closeRef.current?.focus();
 
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("keydown", onKeyDown);
-
     return () => {
       document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", onKeyDown);
     };
   }, [open]);
 
-  const close = () => {
-    setOpen(false);
-    toggleRef.current?.focus();
-  };
+  // Escape closes (returning focus to the toggle); Tab stays inside the drawer.
+  useFocusTrap(panelRef, open, close);
 
   return (
     <>
@@ -66,6 +63,7 @@ export function MobileMenu() {
           />
 
           <div
+            ref={panelRef}
             id="mobile-menu"
             role="dialog"
             aria-modal="true"

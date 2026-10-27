@@ -37,7 +37,7 @@ export function CartLineItem({ line }: CartLineItemProps) {
             className="object-cover"
           />
         ) : (
-          <span className="font-heading text-rose-ink/40 absolute inset-0 flex items-center justify-center text-sm">
+          <span className="font-heading text-rose-ink absolute inset-0 flex items-center justify-center text-sm">
             NP
           </span>
         )}
@@ -63,7 +63,7 @@ export function CartLineItem({ line }: CartLineItemProps) {
               aria-label={`Decrease quantity of ${line.productTitle}`}
               disabled={line.quantity <= 1}
               onClick={() => void updateLine(line.id, line.quantity - 1)}
-              className="text-plum hover:text-rose-ink h-8 w-8 rounded-full text-sm disabled:opacity-40"
+              className="text-plum hover:text-rose-ink h-11 w-11 rounded-full text-sm disabled:opacity-40"
             >
               −
             </button>
@@ -73,7 +73,7 @@ export function CartLineItem({ line }: CartLineItemProps) {
               aria-label={`Increase quantity of ${line.productTitle}`}
               disabled={line.quantity >= max}
               onClick={() => void updateLine(line.id, line.quantity + 1)}
-              className="text-plum hover:text-rose-ink h-8 w-8 rounded-full text-sm disabled:opacity-40"
+              className="text-plum hover:text-rose-ink h-11 w-11 rounded-full text-sm disabled:opacity-40"
             >
               +
             </button>
@@ -82,7 +82,7 @@ export function CartLineItem({ line }: CartLineItemProps) {
           <button
             type="button"
             onClick={() => void removeLine(line.id)}
-            className="text-plum-soft hover:text-rose-ink text-xs underline underline-offset-2 transition-colors"
+            className="text-plum-soft hover:text-rose-ink flex min-h-11 items-center text-xs underline underline-offset-2 transition-colors"
           >
             Remove
           </button>

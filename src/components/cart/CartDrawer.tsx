@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button, Input, buttonClassName } from "@/components/ui";
 import { ROUTES } from "@/constants";
 import { CloseIcon } from "@/icons";
-import { cn, formatMoney } from "@/utils";
+import { cn, formatMoney, useFocusTrap } from "@/utils";
 import { CartLineItem } from "./CartLineItem";
 import { useCart } from "./CartContext";
 import { FreeShippingProgress } from "./FreeShippingProgress";
@@ -19,23 +19,28 @@ import { FreeShippingProgress } from "./FreeShippingProgress";
 export function CartDrawer() {
   const { cart, isOpen, closeCart, applyDiscount } = useCart();
   const closeRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLElement>(null);
+  const openerRef = useRef<HTMLElement | null>(null);
   const [code, setCode] = useState("");
   const [applying, setApplying] = useState(false);
 
+  // Focus the drawer on open, lock scroll, return focus to the opener on close.
   useEffect(() => {
     if (!isOpen) return;
+    openerRef.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
     closeRef.current?.focus();
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") closeCart();
-    };
-    window.addEventListener("keydown", onKeyDown);
     return () => {
       document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", onKeyDown);
+      const opener = openerRef.current;
+      if (opener?.isConnected) opener.focus();
     };
-  }, [isOpen, closeCart]);
+  }, [isOpen]);
+
+  // Tab is confined to the dialog; Escape closes (focus restore runs above).
+  useFocusTrap(panelRef, isOpen, closeCart);
 
   const handleApply = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -65,6 +70,7 @@ export function CartDrawer() {
       />
 
       <aside
+        ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-label="Shopping bag"
@@ -85,7 +91,7 @@ export function CartDrawer() {
             type="button"
             onClick={closeCart}
             aria-label="Close bag"
-            className="text-plum hover:text-rose-ink flex h-10 w-10 items-center justify-center"
+            className="text-plum hover:text-rose-ink flex h-11 w-11 items-center justify-center"
           >
             <CloseIcon className="h-5 w-5" />
           </button>
@@ -147,7 +153,7 @@ export function CartDrawer() {
               <button
                 type="button"
                 onClick={() => void applyDiscount("")}
-                className="underline underline-offset-2"
+                className="flex min-h-11 items-center underline underline-offset-2"
               >
                 Remove
               </button>

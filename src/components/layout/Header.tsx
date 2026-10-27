@@ -16,7 +16,7 @@ export function Header() {
 
         <Link
           href={ROUTES.HOME}
-          className="font-heading text-plum hover:text-rose-ink text-lg tracking-[0.22em] uppercase transition-colors sm:text-xl"
+          className="font-heading text-plum hover:text-rose-ink flex min-h-11 items-center text-base tracking-[0.14em] uppercase transition-colors sm:text-xl sm:tracking-[0.22em]"
         >
           {SITE_NAME}
         </Link>

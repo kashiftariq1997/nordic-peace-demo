@@ -24,16 +24,17 @@ export function CartToasts({ toasts, onDismiss }: CartToastsProps) {
         <div
           key={toast.id}
           role="alert"
-          className="bg-plum text-cream shadow-soft flex max-w-xs items-center gap-3 rounded-full py-3 pr-3 pl-5 text-sm"
+          className="bg-plum text-cream shadow-soft flex max-w-xs items-center gap-3 rounded-full pr-1.5 pl-5 text-sm"
         >
-          <span>{toast.message}</span>
+          {/* The wrapper's padding makes the whole toast exactly 44px tall. */}
+          <span className="py-3">{toast.message}</span>
           <button
             type="button"
             onClick={() => onDismiss(toast.id)}
             aria-label="Dismiss notification"
-            className="text-cream/70 hover:text-cream flex h-7 w-7 shrink-0 items-center justify-center"
+            className="text-cream/70 hover:text-cream flex h-11 w-11 shrink-0 items-center justify-center"
           >
-            <CloseIcon className="h-3.5 w-3.5" />
+            <CloseIcon className="h-4 w-4" />
           </button>
         </div>
       ))}

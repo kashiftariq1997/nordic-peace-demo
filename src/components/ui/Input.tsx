@@ -13,7 +13,7 @@ export function Input({ className, type = "text", invalid = false, ...props }: I
       aria-invalid={invalid || undefined}
       className={cn(
         "text-plum h-12 w-full rounded-full border bg-white px-5 text-sm",
-        "placeholder:text-plum-soft/70",
+        "placeholder:text-plum-soft",
         "transition-colors duration-200",
         invalid ? "border-rose-ink" : "border-line hover:border-blush-deep",
         className,

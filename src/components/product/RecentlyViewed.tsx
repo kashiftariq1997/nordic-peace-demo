@@ -59,7 +59,7 @@ export function RecentlyViewed({ currentHandle }: RecentlyViewedProps) {
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center">
-                      <span className="font-heading text-rose-ink/40 text-xl">Nordic Peace</span>
+                      <span className="font-heading text-rose-ink text-xl">Nordic Peace</span>
                     </div>
                   )}
                 </div>

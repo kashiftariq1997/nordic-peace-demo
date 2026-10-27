@@ -83,12 +83,12 @@ export function SearchBox({ initialQuery = "" }: SearchBoxProps) {
         onKeyDown={(event) => {
           if (event.key === "Escape") setFocused(false);
         }}
-        className="text-plum placeholder:text-plum-soft/70 border-line hover:border-blush-deep h-12 w-full rounded-full border bg-white pr-32 pl-12 text-sm transition-colors duration-200 [&::-webkit-search-cancel-button]:appearance-none"
+        className="text-plum placeholder:text-plum-soft border-line hover:border-blush-deep h-12 w-full rounded-full border bg-white pr-32 pl-12 text-sm transition-colors duration-200 [&::-webkit-search-cancel-button]:appearance-none"
       />
       <SearchIcon className="text-plum-soft pointer-events-none absolute top-1/2 left-5 h-4.5 w-4.5 -translate-y-1/2" />
       <button
         type="submit"
-        className="bg-plum text-cream hover:bg-plum-soft absolute top-1/2 right-1.5 flex h-10 -translate-y-1/2 items-center rounded-full px-5 text-sm font-medium transition-colors"
+        className="bg-plum text-cream hover:bg-plum-soft absolute top-1/2 right-1.5 flex h-11 -translate-y-1/2 items-center rounded-full px-5 text-sm font-medium transition-colors"
       >
         Search
       </button>
@@ -130,7 +130,7 @@ export function SearchBox({ initialQuery = "" }: SearchBoxProps) {
             <button
               type="submit"
               onMouseDown={(event) => event.preventDefault()}
-              className="text-rose-ink hover:bg-blush w-full px-4 py-2.5 text-left text-sm font-medium transition-colors"
+              className="text-rose-ink hover:bg-blush flex min-h-11 w-full items-center px-4 text-left text-sm font-medium transition-colors"
             >
               See all results for “{query}”
             </button>

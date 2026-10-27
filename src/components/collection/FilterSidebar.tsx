@@ -121,7 +121,7 @@ function FiltersPanel({ options, active, onChange }: FiltersPanelProps) {
           {options.productTypes.map((type) => (
             <label
               key={type}
-              className="text-plum flex min-h-9 cursor-pointer items-center gap-3 text-sm"
+              className="text-plum flex min-h-11 cursor-pointer items-center gap-3 text-sm"
             >
               <input
                 type="checkbox"
@@ -148,7 +148,7 @@ function FiltersPanel({ options, active, onChange }: FiltersPanelProps) {
                 checked={active.sizes?.includes(size) ?? false}
                 onChange={() => toggleFacet("sizes", size)}
               />
-              <span className="border-line text-plum hover:border-rose-ink peer-checked:border-plum peer-checked:bg-plum peer-checked:text-cream peer-focus-visible:outline-rose-ink inline-flex h-9 min-w-9 items-center justify-center rounded-full border px-3 text-xs font-medium transition-colors peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2">
+              <span className="border-line text-plum hover:border-rose-ink peer-checked:border-plum peer-checked:bg-plum peer-checked:text-cream peer-focus-visible:outline-rose-ink inline-flex h-11 min-w-11 items-center justify-center rounded-full border px-3 text-xs font-medium transition-colors peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2">
                 {size}
               </span>
             </label>
@@ -164,7 +164,7 @@ function FiltersPanel({ options, active, onChange }: FiltersPanelProps) {
           {options.colors.map((color) => (
             <label
               key={color}
-              className="text-plum flex min-h-10 cursor-pointer items-center gap-3 text-sm"
+              className="text-plum flex min-h-11 cursor-pointer items-center gap-3 text-sm"
             >
               <input
                 type="checkbox"
@@ -209,7 +209,7 @@ function FiltersPanel({ options, active, onChange }: FiltersPanelProps) {
               aria-label="Minimum price in dollars"
               placeholder={`$${options.priceMin}`}
               defaultValue={active.priceMin ?? ""}
-              className="border-line text-plum placeholder:text-plum-soft/70 h-11 w-full min-w-0 rounded-full border bg-white px-4 text-sm"
+              className="border-line text-plum placeholder:text-plum-soft h-11 w-full min-w-0 rounded-full border bg-white px-4 text-sm"
             />
             <span aria-hidden="true" className="text-plum-soft text-sm">
               –
@@ -222,7 +222,7 @@ function FiltersPanel({ options, active, onChange }: FiltersPanelProps) {
               aria-label="Maximum price in dollars"
               placeholder={`$${options.priceMax}`}
               defaultValue={active.priceMax ?? ""}
-              className="border-line text-plum placeholder:text-plum-soft/70 h-11 w-full min-w-0 rounded-full border bg-white px-4 text-sm"
+              className="border-line text-plum placeholder:text-plum-soft h-11 w-full min-w-0 rounded-full border bg-white px-4 text-sm"
             />
           </div>
           <button
@@ -234,7 +234,7 @@ function FiltersPanel({ options, active, onChange }: FiltersPanelProps) {
         </form>
       </fieldset>
 
-      <label className="border-line text-plum flex min-h-10 cursor-pointer items-center gap-3 border-t pt-4 text-sm">
+      <label className="border-line text-plum flex min-h-11 cursor-pointer items-center gap-3 border-t pt-4 text-sm">
         <input
           type="checkbox"
           className="accent-plum h-4 w-4 cursor-pointer"

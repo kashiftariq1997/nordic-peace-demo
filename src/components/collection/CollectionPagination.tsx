@@ -29,7 +29,7 @@ function getPageItems(current: number, total: number): PageItem[] {
 }
 
 const cellClasses =
-  "border-line text-plum hover:border-rose-ink hover:text-rose-ink flex h-10 w-10 items-center justify-center rounded-full border text-sm font-medium transition-colors";
+  "border-line text-plum hover:border-rose-ink hover:text-rose-ink flex h-11 w-11 items-center justify-center rounded-full border text-sm font-medium transition-colors";
 
 /** Offset-based "Showing X–Y of Z" summary plus prev/next and numbered pages. */
 export function CollectionPagination({
@@ -95,7 +95,7 @@ export function CollectionPagination({
               <li key={item}>
                 <span
                   aria-current="page"
-                  className="bg-plum text-cream flex h-10 w-10 items-center justify-center rounded-full text-sm font-medium"
+                  className="bg-plum text-cream flex h-11 w-11 items-center justify-center rounded-full text-sm font-medium"
                 >
                   {item}
                 </span>
