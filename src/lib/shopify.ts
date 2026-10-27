@@ -53,10 +53,20 @@ function normalizeDomain(domain: string): string {
   return domain.replace(/^https?:\/\//, "").replace(/\/+$/, "");
 }
 
+export type ShopifyGqlError = {
+  message: string;
+  extensions?: { code?: string };
+};
+
 export type ShopifyResponse<T> = {
   data?: T;
-  errors?: { message: string }[];
+  errors?: ShopifyGqlError[];
 };
+
+/** Field-level denials (e.g. quantityAvailable without inventory scope) still return data. */
+function isNonFatalFieldError(error: ShopifyGqlError): boolean {
+  return error.extensions?.code === "ACCESS_DENIED";
+}
 
 /**
  * POST a GraphQL document to the Storefront API and return `data`.
@@ -99,11 +109,15 @@ export async function shopifyFetch<T>(
   }
 
   const payload = (await response.json()) as ShopifyResponse<T>;
-  if (payload.errors?.length) {
-    throw new ShopifyError(payload.errors.map((error) => error.message).join("; "));
+  const fatalErrors = payload.errors?.filter((error) => !isNonFatalFieldError(error)) ?? [];
+  if (fatalErrors.length > 0) {
+    throw new ShopifyError(fatalErrors.map((error) => error.message).join("; "));
   }
   if (payload.data === undefined) {
-    throw new ShopifyError("Shopify response contained no data.");
+    throw new ShopifyError(
+      payload.errors?.map((error) => error.message).join("; ") ||
+        "Shopify response contained no data.",
+    );
   }
 
   return payload.data;

@@ -89,6 +89,7 @@ const PRODUCT_FRAGMENT = `
     { namespace: "custom", key: "delivery_note" },
     { namespace: "custom", key: "pairs_with" }
   ]) {
+    key
     type
     value
   }
@@ -144,9 +145,6 @@ const COLLECTION_BY_HANDLE_QUERY = `
       image {
         ${PRODUCT_IMAGE_FRAGMENT}
       }
-      products {
-        totalCount
-      }
     }
   }
 `;
@@ -167,7 +165,7 @@ const COLLECTION_PRODUCTS_QUERY = `
 
 type RawMoney = { amount: string; currencyCode: string };
 type RawImage = { url: string; altText: string | null };
-type RawMetafield = { type: string; value: string } | null;
+type RawMetafield = { key: string; type: string; value: string } | null;
 type RawVariant = {
   id: string;
   title: string;
@@ -251,9 +249,8 @@ function parseMetafieldList(value: string | null | undefined): string[] | null {
   }
 }
 
-function metafieldAt(metafields: RawMetafield[], index: number): string | null {
-  const field = metafields[index];
-  return field ? parseMetafieldString(field.value) : null;
+function metafieldByKey(metafields: RawMetafield[], key: string): RawMetafield {
+  return metafields.find((field) => field?.key === key) ?? null;
 }
 
 function toProduct(raw: RawProduct, featuredPosition: number): Product {
@@ -265,15 +262,20 @@ function toProduct(raw: RawProduct, featuredPosition: number): Product {
   const availableForSale = variants.some((variant) => variant.availableForSale);
   const tags = raw.tags ?? [];
 
-  // Metafield order matches the identifiers list in PRODUCT_FRAGMENT:
-  // 0 fabric, 1 care, 2 highlights, 3 size_chart, 4 delivery_note, 5 pairs_with.
+  const rawMetafields = raw.metafields ?? [];
+  const fabric = metafieldByKey(rawMetafields, "fabric");
+  const care = metafieldByKey(rawMetafields, "care");
+  const highlights = metafieldByKey(rawMetafields, "highlights");
+  const sizeChart = metafieldByKey(rawMetafields, "size_chart");
+  const deliveryNote = metafieldByKey(rawMetafields, "delivery_note");
+  const pairsWith = metafieldByKey(rawMetafields, "pairs_with");
   const metafields = {
-    fabric: metafieldAt(raw.metafields, 0),
-    care: metafieldAt(raw.metafields, 1),
-    highlights: raw.metafields[2] ? parseMetafieldList(raw.metafields[2].value) : null,
-    sizeChart: raw.metafields[3] ? parseMetafieldString(raw.metafields[3].value) : null,
-    deliveryNote: raw.metafields[4] ? parseMetafieldString(raw.metafields[4].value) : null,
-    pairsWith: raw.metafields[5] ? parseMetafieldList(raw.metafields[5].value) : null,
+    fabric: fabric ? parseMetafieldString(fabric.value) : null,
+    care: care ? parseMetafieldString(care.value) : null,
+    highlights: highlights ? parseMetafieldList(highlights.value) : null,
+    sizeChart: sizeChart ? parseMetafieldString(sizeChart.value) : null,
+    deliveryNote: deliveryNote ? parseMetafieldString(deliveryNote.value) : null,
+    pairsWith: pairsWith ? parseMetafieldList(pairsWith.value) : null,
   };
 
   return {
@@ -367,15 +369,16 @@ export async function fetchCollections(): Promise<Collection[]> {
 export async function fetchCollectionByHandle(
   handle: string,
 ): Promise<{ collection: Collection; products: Product[] } | null> {
-  const data = await shopifyFetch<{
-    collection: (RawCollection & { products: { totalCount: number } }) | null;
-  }>(COLLECTION_BY_HANDLE_QUERY, { handle });
+  const data = await shopifyFetch<{ collection: RawCollection | null }>(
+    COLLECTION_BY_HANDLE_QUERY,
+    { handle },
+  );
   if (!data.collection) {
     return null;
   }
   const products = await fetchProductsScoped({ collectionHandle: handle });
   return {
-    collection: toCollection(data.collection, data.collection.products.totalCount),
+    collection: toCollection(data.collection, products.length),
     products,
   };
 }
