@@ -150,6 +150,14 @@ export function CartProvider({
     } catch {
       initialId = null;
     }
+    if (initialId && !initialId.startsWith("gid://shopify/Cart/")) {
+      initialId = null;
+      try {
+        window.localStorage.removeItem(CART_ID_STORAGE_KEY);
+      } catch {
+        // The stale value is treated as absent for this session.
+      }
+    }
     cartIdRef.current = initialId;
     let cancelled = false;
     fetchCart(initialId)
