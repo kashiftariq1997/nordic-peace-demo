@@ -284,5 +284,12 @@ export async function shopifyCartDiscountCodesUpdate(
   throwUserErrors(data, "cartDiscountCodesUpdate");
   const cart = await getCart(cartId);
   if (!cart) throw new Error("Shopify cart vanished after updating codes.");
+  const requestedCode = codes[0]?.trim();
+  if (
+    requestedCode &&
+    cart.discount?.code.toLocaleUpperCase() !== requestedCode.toLocaleUpperCase()
+  ) {
+    throw new Error("That discount code isn’t valid for the items in your bag.");
+  }
   return cart;
 }
