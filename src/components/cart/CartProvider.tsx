@@ -114,7 +114,17 @@ export function CartProvider({
 
   const setCart = useCallback((next: CartState) => {
     cartRef.current = next;
+    cartIdRef.current = next.id;
     setCartState(next);
+    try {
+      if (next.id) {
+        window.localStorage.setItem(CART_ID_STORAGE_KEY, next.id);
+      } else {
+        window.localStorage.removeItem(CART_ID_STORAGE_KEY);
+      }
+    } catch {
+      // Cart state remains usable for this session when storage is unavailable.
+    }
   }, []);
 
   const pushToast = useCallback((message: string) => {
@@ -130,29 +140,6 @@ export function CartProvider({
 
   const dismissToast = useCallback((id: string) => {
     setToasts((current) => current.filter((toast) => toast.id !== id));
-  }, []);
-
-  const ensureCartId = useCallback((): string => {
-    if (cartIdRef.current) return cartIdRef.current;
-    let stored: string | null = null;
-    try {
-      stored = window.localStorage.getItem(CART_ID_STORAGE_KEY);
-    } catch {
-      stored = null;
-    }
-    if (!stored) {
-      stored =
-        typeof crypto !== "undefined" && "randomUUID" in crypto
-          ? crypto.randomUUID()
-          : `${Date.now()}`;
-      try {
-        window.localStorage.setItem(CART_ID_STORAGE_KEY, stored);
-      } catch {
-        // Storage unavailable — the id lives for this session only.
-      }
-    }
-    cartIdRef.current = stored;
-    return stored;
   }, []);
 
   // Hydrate the persisted cart once on mount.
@@ -192,7 +179,7 @@ export function CartProvider({
       if (optimistic !== previous) setCart(optimistic);
       setIsOpen(true);
 
-      const result = await addCartLine(ensureCartId(), line);
+      const result = await addCartLine(cartRef.current.id, line);
       if (result.ok) {
         setCart(result.cart);
         const added = result.cart.lines.find(
@@ -213,7 +200,7 @@ export function CartProvider({
       pushToast(result.error);
       return false;
     },
-    [ensureCartId, pushToast, setCart],
+    [pushToast, setCart],
   );
 
   const updateLine = useCallback(
