@@ -1,19 +1,22 @@
-import Image from "next/image";
 import Link from "next/link";
+import storyPhoto from "@/images/story.jpg";
 import { Container } from "@/components/layout";
 import { buttonClassName } from "@/components/ui";
 import { BowIcon } from "@/icons";
 import { ROUTES } from "@/constants";
+import { PhotoWithFallback } from "./PhotoWithFallback";
 
-/** Editorial brand band — story pitch with an illustration. */
+/** Editorial brand band — story pitch with a bedroom photograph. */
 export function StoryBand() {
   return (
     <section className="bg-plum text-cream py-16 sm:py-24">
       <Container className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
         <div className="bg-plum-soft/40 relative aspect-square overflow-hidden rounded-[2.5rem]">
-          <Image
-            src="/images/collections/c-cozy-home.svg"
-            alt="Illustration of layered cozy bedding"
+          <PhotoWithFallback
+            src={storyPhoto}
+            fallbackSrc="/images/collections/c-cozy-home.svg"
+            alt="A softly layered bedroom with cream bedding, greenery, and a blush throw"
+            fallbackAlt="Illustration of layered cozy bedding"
             fill
             sizes="(min-width: 1024px) 45vw, 90vw"
             className="object-cover"

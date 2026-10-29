@@ -1,9 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
+import heroOne from "@/images/hero-1.webp";
+import heroTwo from "@/images/hero-2.jpg";
 import { Container } from "@/components/layout";
 import { buttonClassName } from "@/components/ui";
 import { BowIcon } from "@/icons";
 import { ROUTES, SITE_DESCRIPTION } from "@/constants";
+import { PhotoWithFallback } from "./PhotoWithFallback";
 
 /** Scalloped edge strip — soft coquette divider, sits on the section below. */
 function ScallopEdge() {
@@ -44,20 +47,24 @@ export function Hero() {
         </div>
 
         <div className="relative mx-auto w-full max-w-md lg:max-w-none">
-          <div className="bg-cream shadow-soft relative aspect-square overflow-hidden rounded-[2.5rem]">
-            <Image
-              src="/images/products/p-rosewater-silk-pajama-set.svg"
-              alt="Illustration of the Rosewater Silk Pajama Set"
+          <div className="bg-cream shadow-soft relative aspect-square overflow-hidden rounded-[2.5rem] border border-white/70">
+            <PhotoWithFallback
+              src={heroOne}
+              fallbackSrc="/images/products/p-rosewater-silk-pajama-set.svg"
+              alt="A collage of soft sleepwear, cozy bedding, and relaxed mornings"
+              fallbackAlt="Illustration of the Rosewater Silk Pajama Set"
               fill
               sizes="(min-width: 1024px) 45vw, 90vw"
               className="object-cover"
-              priority
+              preload
             />
           </div>
           <div className="bg-cream shadow-soft absolute -bottom-6 -left-4 hidden aspect-square w-36 overflow-hidden rounded-3xl border-4 border-white sm:block sm:w-44">
-            <Image
-              src="/images/products/p-cloud-knit-throw.svg"
-              alt="Illustration of the Cloud Knit Throw"
+            <PhotoWithFallback
+              src={heroTwo}
+              fallbackSrc="/images/products/p-cloud-knit-throw.svg"
+              alt="A calm bedroom with a soft blush throw and layered bedding"
+              fallbackAlt="Illustration of the Cloud Knit Throw"
               fill
               sizes="176px"
               className="object-cover"
@@ -66,7 +73,7 @@ export function Hero() {
           <div className="bg-cream shadow-soft absolute -top-5 -right-3 hidden aspect-square w-32 overflow-hidden rounded-3xl border-4 border-white sm:block sm:w-40">
             <Image
               src="/images/products/p-blush-velvet-jewelry-box.svg"
-              alt="Illustration of the Blush Velvet Jewelry Box"
+              alt="Illustration of a blush velvet jewelry box"
               fill
               sizes="160px"
               className="object-cover"
