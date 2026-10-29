@@ -8,6 +8,7 @@ import type {
 } from "@/types";
 import { computeBadges } from "@/utils";
 import { shopifyFetch } from "@/lib/shopify";
+import { MOCK_COLLECTIONS } from "@/services/mock-collections";
 
 /**
  * Shopify Storefront API query documents, response types and mappers.
@@ -130,6 +131,17 @@ const COLLECTIONS_QUERY = `
         image {
           ${PRODUCT_IMAGE_FRAGMENT}
         }
+        products(first: 250) {
+          nodes {
+            featuredImage {
+              ${PRODUCT_IMAGE_FRAGMENT}
+            }
+          }
+          pageInfo {
+            hasNextPage
+            endCursor
+          }
+        }
       }
     }
   }
@@ -144,6 +156,33 @@ const COLLECTION_BY_HANDLE_QUERY = `
       description
       image {
         ${PRODUCT_IMAGE_FRAGMENT}
+      }
+      products(first: 250) {
+        nodes {
+          featuredImage {
+            ${PRODUCT_IMAGE_FRAGMENT}
+          }
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  }
+`;
+
+const COLLECTION_PRODUCT_COUNT_QUERY = `
+  query CollectionProductCount($handle: String!, $first: Int!, $after: String) {
+    collection(handle: $handle) {
+      products(first: $first, after: $after) {
+        nodes {
+          id
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
       }
     }
   }
@@ -201,6 +240,10 @@ type RawCollection = {
   title: string;
   description: string;
   image: RawImage | null;
+  products: {
+    nodes: { featuredImage: RawImage | null }[];
+    pageInfo: { hasNextPage: boolean; endCursor: string | null };
+  };
 };
 
 /* ---------------------------------- Mappers ---------------------------------- */
@@ -305,14 +348,53 @@ function toProduct(raw: RawProduct, featuredPosition: number): Product {
 }
 
 function toCollection(raw: RawCollection, productsCount: number): Collection {
+  const firstProductImage = raw.products.nodes[0]?.featuredImage;
+  const brandImage = MOCK_COLLECTIONS.find((collection) => collection.handle === raw.handle)?.image;
   return {
     id: raw.id,
     handle: raw.handle,
     title: raw.title,
     description: raw.description,
-    image: raw.image ? toImage(raw.image) : null,
+    image: raw.image
+      ? toImage(raw.image)
+      : firstProductImage
+        ? toImage(firstProductImage)
+        : (brandImage ?? null),
     productsCount,
   };
+}
+
+async function countCollectionProducts(collection: RawCollection): Promise<number> {
+  let count = collection.products.nodes.length;
+  let { hasNextPage, endCursor } = collection.products.pageInfo;
+
+  while (hasNextPage) {
+    if (!endCursor) {
+      throw new Error(`Shopify did not return a cursor for collection "${collection.handle}".`);
+    }
+
+    const data = await shopifyFetch<{
+      collection: {
+        products: {
+          nodes: { id: string }[];
+          pageInfo: { hasNextPage: boolean; endCursor: string | null };
+        };
+      } | null;
+    }>(COLLECTION_PRODUCT_COUNT_QUERY, {
+      handle: collection.handle,
+      first: MAX_SCOPED_NODES,
+      after: endCursor,
+    });
+
+    if (!data.collection) {
+      throw new Error(`Shopify collection "${collection.handle}" disappeared during pagination.`);
+    }
+
+    count += data.collection.products.nodes.length;
+    ({ hasNextPage, endCursor } = data.collection.products.pageInfo);
+  }
+
+  return count;
 }
 
 /* ------------------------------ Scoped data fetches ------------------------------ */
@@ -361,9 +443,11 @@ export async function fetchCollections(): Promise<Collection[]> {
   const data = await shopifyFetch<{ collections: { nodes: RawCollection[] } }>(COLLECTIONS_QUERY, {
     first: MAX_SCOPED_NODES,
   });
-  // productsCount needs a second hop per collection; keep it lazy-cheap here by
-  // counting from the scoped products fetch the caller already makes when needed.
-  return data.collections.nodes.map((node) => toCollection(node, 0));
+  return Promise.all(
+    data.collections.nodes.map(async (node) =>
+      toCollection(node, await countCollectionProducts(node)),
+    ),
+  );
 }
 
 export async function fetchCollectionByHandle(
@@ -377,8 +461,9 @@ export async function fetchCollectionByHandle(
     return null;
   }
   const products = await fetchProductsScoped({ collectionHandle: handle });
+  const productsCount = await countCollectionProducts(data.collection);
   return {
-    collection: toCollection(data.collection, products.length),
+    collection: toCollection(data.collection, productsCount),
     products,
   };
 }

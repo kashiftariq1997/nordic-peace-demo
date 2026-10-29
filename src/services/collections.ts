@@ -8,7 +8,7 @@ import { getProducts } from "@/services/products";
 
 /**
  * Cached collection queries. Tagged "collections" (the /api/revalidate
- * webhook refreshes it); product counts on the mock path use membership.
+ * webhook refreshes it); both mock and Shopify paths return exact product counts.
  */
 
 export const COLLECTIONS_TAG = "collections";
