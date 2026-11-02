@@ -4,7 +4,7 @@ import { isEmail } from "@/utils";
 const VALID_SOURCES = ["footer", "home", "popup"] as const;
 
 /** Latest Klaviyo API revision the profile-subscription endpoint accepts. */
-const KLAVIYO_REVISION = "2025-10-15";
+const KLAVIYO_REVISION = "2026-10-15";
 const KLAVIYO_SUBSCRIBE_URL = "https://a.klaviyo.com/api/profile-subscription-bulk-create-jobs/";
 
 type NewsletterRequest = {
@@ -58,21 +58,21 @@ export async function POST(request: Request) {
       method: "POST",
       headers: {
         Authorization: `Klaviyo-API-Key ${privateKey}`,
-        "content-type": "application/json",
-        accept: "application/json",
+        "content-type": "application/vnd.api+json",
+        accept: "application/vnd.api+json",
         revision: KLAVIYO_REVISION,
       },
       body: JSON.stringify({
         data: {
           type: "profile-subscription-bulk-create-job",
           attributes: {
+            custom_source: source,
             profiles: {
               data: [
                 {
                   type: "profile",
                   attributes: {
                     email,
-                    signup_source: source,
                     subscriptions: {
                       email: { marketing: { consent: "SUBSCRIBED" } },
                     },

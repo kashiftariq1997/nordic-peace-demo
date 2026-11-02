@@ -1,7 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
 import heroOne from "@/images/hero-1.webp";
-import heroTwo from "@/images/hero-2.jpg";
 import { Container } from "@/components/layout";
 import { buttonClassName } from "@/components/ui";
 import { BowIcon } from "@/icons";
@@ -25,8 +23,19 @@ function ScallopEdge() {
 
 export function Hero() {
   return (
-    <section className="bg-blush relative">
-      <Container className="grid items-center gap-12 py-16 sm:py-24 lg:grid-cols-2 lg:gap-16">
+    <section className="bg-blush relative isolate overflow-hidden">
+      <PhotoWithFallback
+        src={heroOne}
+        fallbackSrc="/images/products/p-rosewater-silk-pajama-set.svg"
+        alt="A collage of soft sleepwear, cozy bedding, and relaxed mornings"
+        fallbackAlt="Illustration of the Rosewater Silk Pajama Set"
+        fill
+        sizes="100vw"
+        className="object-cover"
+        preload
+      />
+      <div className="from-cream/95 via-cream/85 to-cream/60 lg:from-cream/90 lg:via-cream/70 lg:to-cream/10 absolute inset-0 bg-gradient-to-r" />
+      <Container className="relative z-10 flex min-h-[36rem] items-center py-16 sm:min-h-[42rem] sm:py-24">
         <div className="flex max-w-xl flex-col items-start gap-6">
           <p className="text-rose-ink flex items-center gap-2 text-xs font-medium tracking-[0.3em] uppercase">
             <BowIcon className="h-4 w-4" />
@@ -43,41 +52,6 @@ export function Hero() {
             <Link href={ROUTES.OUR_STORY} className={buttonClassName({ variant: "secondary" })}>
               Our story
             </Link>
-          </div>
-        </div>
-
-        <div className="relative mx-auto w-full max-w-md lg:max-w-none">
-          <div className="bg-cream shadow-soft relative aspect-square overflow-hidden rounded-[2.5rem] border border-white/70">
-            <PhotoWithFallback
-              src={heroOne}
-              fallbackSrc="/images/products/p-rosewater-silk-pajama-set.svg"
-              alt="A collage of soft sleepwear, cozy bedding, and relaxed mornings"
-              fallbackAlt="Illustration of the Rosewater Silk Pajama Set"
-              fill
-              sizes="(min-width: 1024px) 45vw, 90vw"
-              className="object-cover"
-              preload
-            />
-          </div>
-          <div className="bg-cream shadow-soft absolute -bottom-6 -left-4 hidden aspect-square w-36 overflow-hidden rounded-3xl border-4 border-white sm:block sm:w-44">
-            <PhotoWithFallback
-              src={heroTwo}
-              fallbackSrc="/images/products/p-cloud-knit-throw.svg"
-              alt="A calm bedroom with a soft blush throw and layered bedding"
-              fallbackAlt="Illustration of the Cloud Knit Throw"
-              fill
-              sizes="176px"
-              className="object-cover"
-            />
-          </div>
-          <div className="bg-cream shadow-soft absolute -top-5 -right-3 hidden aspect-square w-32 overflow-hidden rounded-3xl border-4 border-white sm:block sm:w-40">
-            <Image
-              src="/images/products/p-blush-velvet-jewelry-box.svg"
-              alt="Illustration of a blush velvet jewelry box"
-              fill
-              sizes="160px"
-              className="object-cover"
-            />
           </div>
         </div>
       </Container>
