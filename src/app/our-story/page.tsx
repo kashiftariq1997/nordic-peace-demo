@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import ourStoryPhoto from "@/images/ourStory.webp";
 import { ContentHero } from "@/components/content";
 import { Container } from "@/components/layout";
 import { buttonClassName } from "@/components/ui";
@@ -41,8 +42,8 @@ export default function OurStoryPage() {
         <Container className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
           <div className="bg-blush shadow-soft relative aspect-[4/5] overflow-hidden rounded-[2.5rem] sm:aspect-[4/3] lg:aspect-[4/5]">
             <Image
-              src="/images/products/p-rosewater-silk-pajama-set.svg"
-              alt="Illustration of the Rosewater Silk Pajama Set folded on linen"
+              src={ourStoryPhoto}
+              alt="A softly lit bedroom with cream bedding, knitted throws, plants, and woven accents"
               fill
               sizes="(min-width: 1024px) 45vw, 90vw"
               className="object-cover"
