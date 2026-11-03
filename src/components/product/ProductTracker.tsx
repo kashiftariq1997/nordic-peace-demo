@@ -1,7 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
-import { recordRecentlyViewed, trackViewedProduct } from "@/utils";
+import { useEffect, useSyncExternalStore } from "react";
+import {
+  getMarketingConsentSnapshot,
+  getServerMarketingConsentSnapshot,
+  recordRecentlyViewed,
+  subscribeMarketingConsent,
+  trackViewedProduct,
+} from "@/utils";
 
 type ProductTrackerProps = {
   id: string;
@@ -27,6 +33,11 @@ export function ProductTracker({
 }: ProductTrackerProps) {
   const priceAmount = price.amount;
   const priceCurrency = price.currencyCode;
+  const consent = useSyncExternalStore(
+    subscribeMarketingConsent,
+    getMarketingConsentSnapshot,
+    getServerMarketingConsentSnapshot,
+  );
 
   useEffect(() => {
     recordRecentlyViewed({
@@ -36,8 +47,12 @@ export function ProductTracker({
       imageUrl,
       imageAlt,
     });
+  }, [handle, name, priceAmount, priceCurrency, imageUrl, imageAlt]);
+
+  useEffect(() => {
+    if (consent !== "granted") return;
     trackViewedProduct({ id, name, handle, price: priceAmount });
-  }, [id, name, handle, priceAmount, priceCurrency, imageUrl, imageAlt]);
+  }, [consent, id, name, handle, priceAmount]);
 
   return null;
 }

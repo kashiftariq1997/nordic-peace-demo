@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button, Input } from "@/components/ui";
 import { ROUTES } from "@/constants";
-import { isEmail } from "@/utils";
+import { isEmail, rememberKlaviyoEmail } from "@/utils";
 
 type FormStatus = "idle" | "loading" | "success" | "error";
 
@@ -48,6 +48,7 @@ export function NewsletterForm({ source }: NewsletterFormProps) {
         throw new Error(`Newsletter signup failed with status ${response.status}`);
       }
       const data = (await response.json()) as { devMode?: boolean };
+      rememberKlaviyoEmail(email.trim());
       setDevMode(data.devMode === true);
       setStatus("success");
       setEmail("");

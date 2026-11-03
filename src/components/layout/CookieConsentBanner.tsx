@@ -7,6 +7,7 @@ import { ROUTES } from "@/constants";
 import {
   getMarketingConsentSnapshot,
   getServerMarketingConsentSnapshot,
+  identifyKlaviyoProfile,
   loadKlaviyoScript,
   saveMarketingConsent,
   subscribeMarketingConsent,
@@ -36,6 +37,7 @@ export function CookieConsentBanner({ klaviyoPublicKey }: CookieConsentBannerPro
   useEffect(() => {
     if (consent === "granted" && klaviyoPublicKey) {
       loadKlaviyoScript(klaviyoPublicKey);
+      identifyKlaviyoProfile();
     }
   }, [consent, klaviyoPublicKey]);
 

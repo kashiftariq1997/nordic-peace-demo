@@ -9,6 +9,7 @@
  */
 
 const CONSENT_KEY = "np-marketing-consent";
+const EMAIL_KEY = "np-klaviyo-email";
 const KLAVIYO_SCRIPT_SRC = "https://static.klaviyo.com/klaviyo.js";
 
 /**
@@ -27,6 +28,7 @@ declare global {
 }
 
 const consentListeners = new Set<() => void>();
+let sessionEmail: string | null = null;
 
 function readConsent(): MarketingConsent {
   if (typeof window === "undefined") return "unknown";
@@ -63,9 +65,38 @@ export function subscribeMarketingConsent(onStoreChange: () => void): () => void
 export function saveMarketingConsent(granted: boolean): void {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(CONSENT_KEY, granted ? "granted" : "denied");
+  if (granted && sessionEmail) {
+    window.localStorage.setItem(EMAIL_KEY, sessionEmail);
+  } else if (!granted) {
+    window.localStorage.removeItem(EMAIL_KEY);
+    sessionEmail = null;
+  }
   for (const listener of consentListeners) {
     listener();
   }
+}
+
+/** Remember a subscribed address in memory, persisting it only with consent. */
+export function rememberKlaviyoEmail(email: string): void {
+  if (typeof window === "undefined") return;
+  const normalizedEmail = email.trim();
+  if (!normalizedEmail) return;
+
+  sessionEmail = normalizedEmail;
+  if (readConsent() !== "granted") return;
+
+  window.localStorage.setItem(EMAIL_KEY, normalizedEmail);
+  identifyKlaviyoProfile();
+}
+
+/** Identify the known subscriber only after marketing consent is granted. */
+export function identifyKlaviyoProfile(): void {
+  if (typeof window === "undefined" || readConsent() !== "granted") return;
+  const email = window.localStorage.getItem(EMAIL_KEY) ?? sessionEmail;
+  if (!email) return;
+
+  window.klaviyo = window.klaviyo ?? [];
+  window.klaviyo.push(["identify", { email }]);
 }
 
 /** Inject the Klaviyo loader once; subsequent calls are no-ops. */
@@ -87,6 +118,7 @@ export function loadKlaviyoScript(publicKey: string): void {
  */
 export function trackKlaviyoEvent(event: KlaviyoEvent): void {
   if (typeof window === "undefined" || readConsent() !== "granted") return;
+  identifyKlaviyoProfile();
   window.klaviyo = window.klaviyo ?? [];
   window.klaviyo.push(event);
 }
