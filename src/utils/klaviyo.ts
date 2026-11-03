@@ -10,7 +10,7 @@
 
 const CONSENT_KEY = "np-marketing-consent";
 const EMAIL_KEY = "np-klaviyo-email";
-const KLAVIYO_SCRIPT_SRC = "https://static.klaviyo.com/klaviyo.js";
+const KLAVIYO_SCRIPT_SRC = "https://static.klaviyo.com/onsite/js/klaviyo.js";
 
 /**
  * "unknown" — server snapshot (no browser storage).
@@ -109,6 +109,10 @@ export function loadKlaviyoScript(publicKey: string): void {
   script.async = true;
   script.crossOrigin = "anonymous";
   script.dataset.klaviyoLoader = "true";
+  script.addEventListener("error", () => {
+    console.warn("Klaviyo onsite script failed to load.");
+    script.remove();
+  });
   document.head.appendChild(script);
 }
 
