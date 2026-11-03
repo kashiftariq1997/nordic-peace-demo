@@ -19,11 +19,18 @@ const KLAVIYO_SCRIPT_SRC = "https://static.klaviyo.com/onsite/js/klaviyo.js";
  */
 export type MarketingConsent = "unknown" | "pending" | "granted" | "denied";
 
-type KlaviyoEvent = readonly [string, string, Record<string, unknown>?];
+type KlaviyoCommand = readonly [string, ...unknown[]];
+const queueProxyMarker = Symbol("klaviyoQueueProxy");
+
+type KlaviyoQueue = {
+  push: (...commands: KlaviyoCommand[]) => number;
+  [queueProxyMarker]?: true;
+};
 
 declare global {
   interface Window {
-    klaviyo?: unknown[];
+    _klOnsite?: KlaviyoCommand[];
+    klaviyo?: KlaviyoQueue | KlaviyoCommand[];
   }
 }
 
@@ -95,14 +102,52 @@ export function identifyKlaviyoProfile(): void {
   const email = window.localStorage.getItem(EMAIL_KEY) ?? sessionEmail;
   if (!email) return;
 
-  window.klaviyo = window.klaviyo ?? [];
-  window.klaviyo.push(["identify", { email }]);
+  queueKlaviyoCommand(["identify", { email }]);
+}
+
+function ensureKlaviyoQueue(): void {
+  const existingQueue = window.klaviyo;
+  if (existingQueue && !Array.isArray(existingQueue) && existingQueue[queueProxyMarker]) {
+    return;
+  }
+
+  const onsiteQueue = (window._klOnsite ??= []);
+  if (Array.isArray(existingQueue)) {
+    onsiteQueue.push(...existingQueue);
+  }
+
+  const queueProxy = new Proxy({} as KlaviyoQueue, {
+    get(target, property, receiver) {
+      if (property === "push") {
+        return (...commands: KlaviyoCommand[]) => {
+          const queue = (window._klOnsite ??= []);
+          for (const command of commands) {
+            queue.push(command);
+            if (process.env.NODE_ENV !== "production") {
+              const eventName =
+                command[0] === "track" && typeof command[1] === "string" ? command[1] : command[0];
+              console.debug("[klaviyo] queued", eventName);
+            }
+          }
+          return queue.length;
+        };
+      }
+      return Reflect.get(target, property, receiver);
+    },
+  });
+  Object.defineProperty(queueProxy, queueProxyMarker, { value: true });
+  window.klaviyo = queueProxy;
+}
+
+function queueKlaviyoCommand(command: KlaviyoCommand): void {
+  ensureKlaviyoQueue();
+  window.klaviyo?.push(command);
 }
 
 /** Inject the Klaviyo loader once; subsequent calls are no-ops. */
 export function loadKlaviyoScript(publicKey: string): void {
   if (typeof window === "undefined" || !publicKey) return;
-  window.klaviyo = window.klaviyo ?? [];
+  ensureKlaviyoQueue();
   if (document.querySelector("script[data-klaviyo-loader]")) return;
   const script = document.createElement("script");
   script.src = `${KLAVIYO_SCRIPT_SRC}?company_id=${encodeURIComponent(publicKey)}`;
@@ -120,11 +165,10 @@ export function loadKlaviyoScript(publicKey: string): void {
  * Fire a Klaviyo event — silently no-ops without granted consent or a loaded
  * script. Queueing into `window.klaviyo` works even before the script lands.
  */
-export function trackKlaviyoEvent(event: KlaviyoEvent): void {
+export function trackKlaviyoEvent(event: KlaviyoCommand): void {
   if (typeof window === "undefined" || readConsent() !== "granted") return;
   identifyKlaviyoProfile();
-  window.klaviyo = window.klaviyo ?? [];
-  window.klaviyo.push(event);
+  queueKlaviyoCommand(event);
 }
 
 /** Spec event: fires when a visitor opens a product page. */
