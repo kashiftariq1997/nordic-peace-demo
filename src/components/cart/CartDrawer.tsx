@@ -6,6 +6,7 @@ import { Button, Input, buttonClassName } from "@/components/ui";
 import { ROUTES } from "@/constants";
 import { CloseIcon } from "@/icons";
 import { cn, formatMoney, useFocusTrap } from "@/utils";
+import { trackGA4Event } from "@/utils/ga4";
 import { CartLineItem } from "./CartLineItem";
 import { useCart } from "./CartContext";
 import { FreeShippingProgress } from "./FreeShippingProgress";
@@ -182,6 +183,20 @@ export function CartDrawer({ freeShippingThreshold }: { freeShippingThreshold: n
               href={cart.checkoutUrl}
               className={buttonClassName({ className: "w-full" })}
               rel="noopener noreferrer"
+              onClick={() =>
+                trackGA4Event("begin_checkout", {
+                  currency: "PKR",
+                  value: cart.total.amount,
+                  transport_type: "beacon",
+                  items: cart.lines.map((line) => ({
+                    item_id: line.productId,
+                    item_name: line.productTitle,
+                    item_variant: line.variantTitle,
+                    price: line.unitPrice.amount,
+                    quantity: line.quantity,
+                  })),
+                })
+              }
             >
               Checkout
             </a>

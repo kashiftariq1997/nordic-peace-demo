@@ -12,21 +12,27 @@ import {
   saveMarketingConsent,
   subscribeMarketingConsent,
 } from "@/utils";
+import { loadGA4, stopGA4 } from "@/utils/ga4";
 
 type CookieConsentBannerProps = {
   /** Klaviyo public site ID from the server — null when tracking is off. */
   klaviyoPublicKey: string | null;
+  /** GA4 measurement ID — null when analytics is not configured. */
+  gaMeasurementId: string | null;
 };
 
 /**
- * Cookie consent banner (spec §6) — gates all Klaviyo tracking.
+ * Cookie consent banner (spec §6) — gates analytics and marketing tracking.
  *
  * Consent is read from localStorage through useSyncExternalStore, so the SSR
  * HTML stays neutral and the banner only appears for undecided visitors after
- * hydration. Accepting injects the Klaviyo loader; declining persists a
- * refusal so no tracking script is ever loaded.
+ * hydration. Accepting loads configured trackers; declining persists a
+ * refusal so no marketing or analytics script is loaded.
  */
-export function CookieConsentBanner({ klaviyoPublicKey }: CookieConsentBannerProps) {
+export function CookieConsentBanner({
+  klaviyoPublicKey,
+  gaMeasurementId,
+}: CookieConsentBannerProps) {
   const bannerRef = useRef<HTMLElement>(null);
   const consent = useSyncExternalStore(
     subscribeMarketingConsent,
@@ -40,6 +46,14 @@ export function CookieConsentBanner({ klaviyoPublicKey }: CookieConsentBannerPro
       identifyKlaviyoProfile();
     }
   }, [consent, klaviyoPublicKey]);
+
+  useEffect(() => {
+    if (consent === "granted" && gaMeasurementId) {
+      loadGA4();
+    } else {
+      stopGA4();
+    }
+  }, [consent, gaMeasurementId]);
 
   // Publish the live banner height as --cookie-banner-h so bottom-fixed UI
   // (the sticky add-to-cart bar) can sit above it instead of being covered.

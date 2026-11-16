@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
+import { GA4RouteTracker } from "@/components/analytics/GA4RouteTracker";
 import { CartProvider } from "@/components/cart";
 import { AnnouncementBar, CookieConsentBanner, Footer, Header } from "@/components/layout";
 import { OrganizationJsonLd } from "@/components/seo";
@@ -63,7 +65,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             {children}
           </main>
           <Footer />
-          <CookieConsentBanner klaviyoPublicKey={process.env.KLAVIYO_PUBLIC_KEY ?? null} />
+          <CookieConsentBanner
+            klaviyoPublicKey={process.env.KLAVIYO_PUBLIC_KEY ?? null}
+            gaMeasurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? null}
+          />
+          <Suspense fallback={null}>
+            <GA4RouteTracker />
+          </Suspense>
           <OrganizationJsonLd />
         </CartProvider>
       </body>

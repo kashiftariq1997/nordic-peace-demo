@@ -11,6 +11,7 @@ import {
 } from "@/lib/cart-actions";
 import type { CartLine, CartLineInput, CartState } from "@/types";
 import { trackAddedToCart } from "@/utils";
+import { trackGA4Event } from "@/utils/ga4";
 import { CartContext, type CartValue } from "./CartContext";
 import { CartDrawer } from "./CartDrawer";
 import { CartToasts, type CartToast } from "./CartToasts";
@@ -200,6 +201,19 @@ export function CartProvider({
             handle: added.handle,
             price: added.unitPrice.amount,
             quantity: line.quantity,
+          });
+          trackGA4Event("add_to_cart", {
+            currency: "PKR",
+            value: added.unitPrice.amount * line.quantity,
+            items: [
+              {
+                item_id: added.productId,
+                item_name: added.productTitle,
+                item_variant: added.variantTitle,
+                price: added.unitPrice.amount,
+                quantity: line.quantity,
+              },
+            ],
           });
         }
         return true;

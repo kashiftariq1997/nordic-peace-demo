@@ -8,6 +8,7 @@ import {
   subscribeMarketingConsent,
   trackViewedProduct,
 } from "@/utils";
+import { trackGA4Event } from "@/utils/ga4";
 
 type ProductTrackerProps = {
   id: string;
@@ -52,6 +53,11 @@ export function ProductTracker({
   useEffect(() => {
     if (consent !== "granted") return;
     trackViewedProduct({ id, name, handle, price: priceAmount });
+    trackGA4Event("view_item", {
+      currency: "PKR",
+      value: priceAmount,
+      items: [{ item_id: id, item_name: name, item_variant: handle, price: priceAmount }],
+    });
   }, [consent, id, name, handle, priceAmount]);
 
   return null;
