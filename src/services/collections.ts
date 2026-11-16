@@ -1,5 +1,6 @@
 import { cacheLife, cacheTag } from "next/cache";
 
+import { BESTSELLERS_COLLECTION_HANDLE } from "@/constants/routes";
 import type { Collection } from "@/types";
 import { isShopifyConfigured } from "@/lib/shopify";
 import { mockQueryCollection, mockQueryCollections } from "@/services/mock-queries";
@@ -17,6 +18,18 @@ const CATALOG_LIFE = "hours";
 /** The virtual "all" collection — every product, no physical Shopify record. */
 export const ALL_COLLECTION_HANDLE = "all";
 
+const VIRTUAL_BESTSELLERS: Collection = {
+  id: "virtual-bestsellers",
+  handle: BESTSELLERS_COLLECTION_HANDLE,
+  title: "Bestsellers",
+  description: "The pieces you come back for, restocked and waiting.",
+  image: {
+    url: "/images/collections/c-bestsellers.svg",
+    altText: "Illustration of a bestseller ribbon",
+  },
+  productsCount: 0,
+};
+
 const VIRTUAL_ALL: Collection = {
   id: "virtual-all",
   handle: ALL_COLLECTION_HANDLE,
@@ -27,13 +40,26 @@ const VIRTUAL_ALL: Collection = {
 };
 
 async function loadCollections(): Promise<Collection[]> {
-  if (!isShopifyConfigured()) {
-    return mockQueryCollections();
-  }
-  return fetchCollections();
+  const collections = isShopifyConfigured()
+    ? await fetchCollections()
+    : await mockQueryCollections();
+  const page = await getProducts({
+    collectionHandle: BESTSELLERS_COLLECTION_HANDLE,
+    first: 1,
+  });
+  const bestsellers = { ...VIRTUAL_BESTSELLERS, productsCount: page.totalCount };
+
+  return [
+    ...collections.filter((collection) => collection.handle !== BESTSELLERS_COLLECTION_HANDLE),
+    bestsellers,
+  ];
 }
 
 async function loadCollection(handle: string): Promise<Collection | null> {
+  if (handle === BESTSELLERS_COLLECTION_HANDLE) {
+    const page = await getProducts({ collectionHandle: handle, first: 1 });
+    return { ...VIRTUAL_BESTSELLERS, productsCount: page.totalCount };
+  }
   if (handle === ALL_COLLECTION_HANDLE) {
     // Count the whole catalog via the shared products path (cheap: first=1 page).
     const page = await getProducts({ collectionHandle: ALL_COLLECTION_HANDLE, first: 1 });

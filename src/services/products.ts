@@ -1,5 +1,6 @@
 import { cacheLife, cacheTag } from "next/cache";
 
+import { BESTSELLERS_COLLECTION_HANDLE } from "@/constants/routes";
 import type { Paginated, Product, ProductQueryParams } from "@/types";
 import { isShopifyConfigured } from "@/lib/shopify";
 import {
@@ -28,19 +29,31 @@ export const PRODUCTS_TAG = "products";
 const CATALOG_LIFE = "hours";
 
 async function loadProducts(params: ProductQueryParams): Promise<Paginated<Product>> {
+  const isBestsellers = params.collectionHandle === BESTSELLERS_COLLECTION_HANDLE;
+  const queryParams = isBestsellers
+    ? {
+        ...params,
+        collectionHandle: undefined,
+        filters: {
+          ...params.filters,
+          tags: [...new Set([...(params.filters?.tags ?? []), "bestseller"])],
+        },
+      }
+    : params;
+
   if (!isShopifyConfigured()) {
-    return mockQueryProducts(params);
+    return mockQueryProducts(queryParams);
   }
 
   // Demo tradeoff (see shopify-queries.ts): fetch a scoped window, then reuse
   // the shared in-memory filter/sort/paginate helpers.
   const scoped = await fetchProductsScoped({
-    collectionHandle: params.collectionHandle,
-    query: params.query,
+    collectionHandle: queryParams.collectionHandle,
+    query: queryParams.query,
   });
-  const filtered = applyProductFilters(scoped, params.filters);
-  const sorted = applyProductSort(filtered, params.sort);
-  return paginateProducts(sorted, { first: params.first, cursor: params.cursor });
+  const filtered = applyProductFilters(scoped, queryParams.filters);
+  const sorted = applyProductSort(filtered, queryParams.sort);
+  return paginateProducts(sorted, { first: queryParams.first, cursor: queryParams.cursor });
 }
 
 async function loadProduct(handle: string): Promise<Product | null> {

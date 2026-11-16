@@ -2,6 +2,8 @@
  * All app routes in one place. Always link through these constants — never
  * hardcode hrefs in components.
  */
+export const BESTSELLERS_COLLECTION_HANDLE = "bestsellers";
+
 export const ROUTES = {
   HOME: "/",
   SEARCH: "/search",
@@ -13,6 +15,7 @@ export const ROUTES = {
   CONTACT: "/contact",
   FAQ: "/faq",
   COLLECTION_ALL: "/collections/all",
+  COLLECTION_BESTSELLERS: "/collections/bestsellers",
   COLLECTION_NEW_ARRIVALS: "/collections/new-arrivals",
   COLLECTION_PAJAMA_SETS: "/collections/pajama-sets",
   COLLECTION_COZY_HOME: "/collections/cozy-home",

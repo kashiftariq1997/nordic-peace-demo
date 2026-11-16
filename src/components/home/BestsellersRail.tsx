@@ -15,7 +15,7 @@ export function BestsellersRail({ products }: BestsellersRailProps) {
         <SectionHeader
           eyebrow="Loved by many"
           title="Bestsellers"
-          link={{ label: "View all", href: ROUTES.collection("bestsellers") }}
+          link={{ label: "View all", href: ROUTES.COLLECTION_BESTSELLERS }}
         />
         <ProductGrid products={products} />
       </Container>

@@ -46,9 +46,10 @@ export async function CollectionResults({ handle, searchParams }: CollectionResu
       />
 
       <div className="min-w-0">
-        <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
+        <div className="border-line mb-5 flex flex-wrap items-center justify-between gap-4 border-b pb-4">
           <p className="text-plum-soft text-sm">
-            {page.totalCount} {page.totalCount === 1 ? "product" : "products"}
+            <span className="text-plum font-medium">{page.totalCount}</span>{" "}
+            {page.totalCount === 1 ? "product" : "products"}
           </p>
           <SortSelect sort={query.sort} filters={query.filters} pathname={pathname} />
         </div>
